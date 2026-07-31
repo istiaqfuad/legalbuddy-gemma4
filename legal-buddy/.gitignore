@@ -1,0 +1,20 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# virtual envs
+.env
+
+# temp files
+main.rs
+
+data/
+# graphify generated knowledge graph
+graphify-out/

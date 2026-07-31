@@ -1,0 +1,59 @@
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class Config(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=".env", env_file_encoding="utf-8", extra="ignore"
+    )
+
+    # Chat LLM. provider selects the backend; each has its own default model.
+    DEFAULT_LLM_PROVIDER: str = "gemini"  # "gemini" | "groq"
+    GEMINI_API_KEY: str | None = None
+    CHAT_MODEL: str = "gemini-2.5-flash"
+    # Groq (OpenAI-compatible). Useful for testing without the Gemini free-tier cap.
+    GROQ_API_KEY: str | None = None
+    GROQ_BASE_URL: str = "https://api.groq.com/openai/v1"
+    GROQ_MODEL: str = "llama-3.3-70b-versatile"
+
+    # Fast/cheap models for the multi-turn query rewrite (history-aware retrieval).
+    # Independent of the answer model above — the rewrite is a tiny, latency-
+    # sensitive call, so it uses the smallest model per provider.
+    GEMINI_CONDENSE_MODEL: str = "gemini-2.5-flash-lite"
+    GROQ_CONDENSE_MODEL: str = "llama-3.1-8b-instant"
+    # Turns of conversation history kept for the rewrite and answer prompt.
+    HISTORY_WINDOW_TURNS: int = 6
+
+    # HuggingFace embedding model (run locally via sentence-transformers)
+    HF_TOKEN: str | None = None
+    EMBEDDING_MODEL: str
+
+    LANGSMITH_TRACING: bool = True
+    LANGSMITH_API_KEY: str | None = None
+    LANGSMITH_ENDPOINT: str | None = None
+    LANGSMITH_PROJECT: str | None = "legal-buddy"
+
+    # Qdrant vector store
+    QDRANT_VECTORESTORE: str = "http://213.136.80.53:6333"
+    QDRANT_API_KEY: str | None = None
+    QDRANT_COLLECTION: str = "legal_acts_event_rag_full"
+    POSTGRES_CONNECTION_STRING: str | None = None
+
+    RETRIEVAL_TOP_K: int = 8
+    # Minimum cosine score for a retrieved statute to count as relevant.
+    STATUTE_SCORE_FLOOR: float = 0.0
+    ANSWER_MAX_TOKENS: int | None = None
+    # Two-tier clarify control. The e5 cosine is a WEAK separator — measured,
+    # off-topic "what time is it" scores 0.836 while answerable "my neighbor keeps
+    # threatening me" tops out at 0.818 (with the correct §503 as its top hit). So
+    # no single floor cleanly splits answerable from off-topic. Instead:
+    #   • CLARIFY_SCORE_FLOOR (hard, low): only genuine garbage below this routes
+    #     to a deterministic no-source clarify (e.g. "best pizza recipe" 0.781).
+    #   • LOW_CONFIDENCE_FLOOR (soft, higher): between the two, the turn still goes
+    #     to the model WITH its sources plus a low-confidence hint, and the model
+    #     decides whether to answer or ask. Borderline judgment is the model's, not
+    #     a brittle cutoff. A cross-encoder reranker is the robust long-term fix.
+    CLARIFY_SCORE_FLOOR: float = 0.79
+    LOW_CONFIDENCE_FLOOR: float = 0.83
+
+
+config = Config()

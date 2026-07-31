@@ -1,0 +1,77 @@
+# Production compose for deployment via Dokploy (Docker Swarm + Traefik).
+#
+# Differs from the dev docker-compose.yml:
+#   - no host port bindings (Dokploy UI owns :3000; Traefik fronts the web app;
+#     the api stays internal)
+#   - prod uvicorn (no --reload) and no dev source bind-mounts
+#   - web<->api on a private project network so `api` resolves unambiguously,
+#     while both also join the shared external `dokploy-network` (Traefik for
+#     web; the existing `qdrant:6333` container for api)
+#
+# Env vars (QDRANT_*, EMBEDDING_MODEL, an LLM key, optional LangSmith/HF) are set
+# in the Dokploy Environment tab, which writes them to a .env in the project dir.
+# Point QDRANT_VECTORESTORE at the VM-local Qdrant: http://qdrant:6333
+services:
+  web:
+    build:
+      context: ./apps/web
+    environment:
+      # Server-side proxy target; resolves on the private `internal` network.
+      - API_URL=http://api:8000
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - internal
+      - dokploy-network
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=dokploy-network
+      # Replace the Host() value with your domain (or let Dokploy's Domains UI
+      # inject these labels instead — use one approach, not both).
+      - traefik.http.routers.lawbuddy-web.rule=Host(`REPLACE_WITH_DOMAIN`)
+      - traefik.http.routers.lawbuddy-web.entrypoints=websecure
+      - traefik.http.routers.lawbuddy-web.tls.certresolver=letsencrypt
+      - traefik.http.services.lawbuddy-web.loadbalancer.server.port=3000
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    env_file:
+      - .env
+    # Override the Dockerfile's --reload dev CMD. Single process (no --workers)
+    # to keep one e5 model in RAM and bound memory on the 7.8 GB host.
+    command: ["uvicorn", "api.app:app", "--host", "0.0.0.0", "--port", "8000"]
+    restart: unless-stopped
+    healthcheck:
+      # /rag/health only returns 200 after the e5 model is warmed AND Qdrant is
+      # verified (see apps/api/src/api/app.py lifespan). No curl in the slim
+      # image — use the venv python on PATH.
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/rag/health', timeout=3).status == 200 else 1)"
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      # First boot downloads the embedding model into the hf-cache volume.
+      start_period: 180s
+    networks:
+      - internal
+      - dokploy-network
+    volumes:
+      # Persist the HuggingFace model cache across redeploys.
+      - hf-cache:/home/app/.cache/huggingface
+
+networks:
+  # Project-scoped: isolates web<->api name resolution from other Dokploy apps.
+  internal:
+  # Pre-existing Dokploy overlay: Traefik (web) + the qdrant container (api).
+  dokploy-network:
+    external: true
+
+volumes:
+  hf-cache:

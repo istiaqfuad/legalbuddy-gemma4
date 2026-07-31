@@ -1,0 +1,50 @@
+services:
+  web:
+    build:
+      context: ./apps/web
+    ports:
+      - "3000:3000"
+    environment:
+      # Server-side only: the Next.js route handler proxies to the api service.
+      - API_URL=http://api:8000
+    depends_on:
+      api:
+        # Wait until the api is actually serving AND the embedding model is
+        # warmed (see api healthcheck), not just until its container starts.
+        # This stops the first proxied request from erroring on a cold api.
+        condition: service_healthy
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    restart: unless-stopped
+    healthcheck:
+      # `started` is not enough: the e5 model is warmed in the app lifespan, so
+      # /rag/health only returns 200 once the model is loaded and ready. No curl
+      # in the slim image — use the venv python already on PATH.
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/rag/health', timeout=3).status == 200 else 1)"
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      # First boot downloads the embedding model into the hf-cache volume; give
+      # it room before failing healthchecks count against `retries`.
+      start_period: 180s
+    volumes:
+      - ./apps/api/src:/app/apps/api/src
+      - ./apps/shared/src:/app/apps/shared/src
+      # Persist HuggingFace model cache so the embedding model is downloaded
+      # only once, surviving container rebuilds/recreates.
+      - hf-cache:/home/app/.cache/huggingface
+
+volumes:
+  hf-cache:

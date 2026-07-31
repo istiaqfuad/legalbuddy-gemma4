@@ -1,0 +1,747 @@
+{
+  "tag": "mle5base512",
+  "collection": "legal_acts_eval_mle5base",
+  "n": 120,
+  "metrics": {
+    "chunk": {
+      "recall": {
+        "1": 0.5667,
+        "3": 0.7333,
+        "5": 0.825,
+        "10": 0.8833
+      },
+      "mrr": 0.6743
+    },
+    "section": {
+      "recall": {
+        "1": 0.5667,
+        "3": 0.7333,
+        "5": 0.825,
+        "10": 0.8833
+      },
+      "mrr": 0.6751
+    }
+  },
+  "per_q": [
+    {
+      "question": "জেলা কমিটির তহবিলে কী কী উৎস থেকে অর্থ জমা হতে পারে এবং সেই তহবিল থেকে কীভাবে অর্থ উত্তোলন করা যাবে?",
+      "gold_key": "act-print-882#10",
+      "found_section_rank": 2,
+      "hit@5_section": true
+    },
+    {
+      "question": "যদি কোনো ডিপোজিটরি বা তার প্রতিনিধি সরল বিশ্বাসে কাজ করার পরেও কোনো হিসাবধারীর ক্ষতি হয়, তাহলে কি ডিপোজিটরি দায়ী হবে?",
+      "gold_key": "act-print-829#11",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "যদি কোনো অভিযুক্ত ব্যক্তি গ্রেফতার বা বিচার এড়াতে পালিয়ে যান বা আত্মগোপন করেন এবং সাত দিনের মধ্যে তাকে গ্রেপ্তার করার সম্ভাবনা না থাকে, তাহলে আদালত কী ব্যবস্থা নিতে পারে?",
+      "gold_key": "act-print-934#25",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "যদি কোনো সার আইন লঙ্ঘন করে বিপণন বা বিক্রয়ের জন্য প্রস্তাবিত বা প্রদর্শিত হয়, তবে মালিক বা দখলদার কী ধরনের সরকারি আদেশের সম্মুখীন হতে পারেন?",
+      "gold_key": "act-print-934#19",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "খুলনা মেডিকেল বিশ্ববিদ্যালয়ে স্নাতকোত্তর, নার্সিং বা অন্যান্য কোর্সে ভর্তির নীতিমালা কীসের ভিত্তিতে নির্ধারিত হবে?",
+      "gold_key": "act-print-1371#39",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "কাউন্সিলের সভা কখন এবং কীভাবে অনুষ্ঠিত হবে?",
+      "gold_key": "act-print-1284#6",
+      "found_section_rank": 2,
+      "hit@5_section": true
+    },
+    {
+      "question": "যদি হোটেল বা রেস্তোরাঁ মালিক নিবন্ধক বা নিয়ন্ত্রকের কোনো আদেশে অসন্তুষ্ট হন, তবে তিনি কত দিনের মধ্যে এবং কার কাছে আপিল করতে পারবেন?",
+      "gold_key": "act-print-1154#17",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "বর্ডার গার্ড বাংলাদেশের কোনো সদস্য বাংলাদেশের অভ্যন্তরে বা বাইরে অন্য কোনো আইনে উল্লেখ নেই এমন কোনো সাধারণ ফৌজদারি অপরাধ করলে তার বিচার কার অধীনে হবে?",
+      "gold_key": "act-print-1067#52",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "সীমান্ত এলাকায় গ্রেফতার বা মালামাল আটকের পর বর্ডার গার্ড বাংলাদেশকে কাকে হস্তান্তর করতে হবে?",
+      "gold_key": "act-print-1067#12",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "Under what circumstances can a marriage solemnized according to the Special Marriage Act be annulled or dissolved?",
+      "gold_key": "act-print-25#17",
+      "found_section_rank": 9,
+      "hit@5_section": false
+    },
+    {
+      "question": "বাজেয়াপ্ত করা কোনো বস্তু যদি এই আইনের অধীনে বাজেয়াপ্তযোগ্য হয়, তবে অপরাধ প্রমাণিত না হলেও আদালত সেটি বাজেয়াপ্ত করতে পারে কি?",
+      "gold_key": "act-print-882#32",
+      "found_section_rank": 7,
+      "hit@5_section": false
+    },
+    {
+      "question": "একটি নিবন্ধিত ভৌগোলিক নির্দেশক পণ্যের অনুমোদিত ব্যবহারকারীর নিবন্ধনের মেয়াদ কত বছর এবং তা কীভাবে নবায়ন করা যেতে পারে?",
+      "gold_key": "act-print-1136#15",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "কর্তৃপক্ষকে প্রতি অর্থবছর শেষে সরকারের কাছে কী ধরনের প্রতিবেদন জমা দিতে হয়?",
+      "gold_key": "act-print-1053#36",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "What constitutes using a false property mark when it comes to labelling goods or their containers?",
+      "gold_key": "act-print-11#535",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "বাংলাদেশ ইউনিভার্সিটি অব প্রফেশনালস-এ স্নাতক কোর্সে ভর্তির জন্য কী কী শিক্ষাগত যোগ্যতা এবং অন্যান্য শর্ত পূরণ করতে হবে?",
+      "gold_key": "act-print-1016#48",
+      "found_section_rank": 4,
+      "hit@5_section": true
+    },
+    {
+      "question": "What are the penalties for intentionally offending a woman's modesty through assault or criminal force?",
+      "gold_key": "act-print-11#400",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "What maritime area extends 24 nautical miles beyond Bangladesh's territorial waters, and what powers does the government have within this zone regarding security, immigration, sanitary, and customs laws?",
+      "gold_key": "act-print-1394#5",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "What are the powers of the University regarding the ownership and management of property?",
+      "gold_key": "act-print-319#3",
+      "found_section_rank": 2,
+      "hit@5_section": true
+    },
+    {
+      "question": "এই আইনের অধীনে কোন অপরাধের বিচার কোন ম্যাজিস্ট্রেট করতে পারবেন এবং কী ধরনের শাস্তি দিতে পারবেন?",
+      "gold_key": "act-print-934#20",
+      "found_section_rank": 17,
+      "hit@5_section": false
+    },
+    {
+      "question": "২০২৫ সালের ৩০ জুন সমাপ্ত অর্থবছরের জন্য সরকারের সংযুক্ত তহবিল হতে বিভিন্ন কার্যক্রমের উদ্দেশ্যে তফসিল অনুযায়ী অর্থ বরাদ্দের আইনি অনুমোদন কীভাবে দেওয়া হয়েছে?",
+      "gold_key": "act-print-1544#2",
+      "found_section_rank": 5,
+      "hit@5_section": true
+    },
+    {
+      "question": "What is the legal procedure for documenting a prison medical officer's daily instructions for a prisoner, and how must the jailer record whether these directions have been carried out?",
+      "gold_key": "act-print-69#37",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "If an offender is sentenced to nine months of rigorous imprisonment, what is the maximum duration of solitary confinement that a court can legally impose?",
+      "gold_key": "act-print-11#78",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "ভূমি অপরাধ প্রতিরোধ ও প্রতিকার আইন অনুযায়ী, অন্যের জমি নিজের দাবি করে হস্তান্তর করা বা মিথ্যা তথ্য দিয়ে দলিল সম্পাদন করার অপরাধে সর্বোচ্চ কী শাস্তির বিধান রয়েছে?",
+      "gold_key": "act-print-1454#3",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "What is the penalty under Bangladeshi law if a person intentionally destroys or hides a document that they have been legally summoned to produce as evidence in court?",
+      "gold_key": "act-print-11#236",
+      "found_section_rank": 2,
+      "hit@5_section": true
+    },
+    {
+      "question": "Under the Penal Code of Bangladesh, how many participants are required for a robbery to be legally classified as dacoity?",
+      "gold_key": "act-print-11#442",
+      "found_section_rank": 2,
+      "hit@5_section": true
+    },
+    {
+      "question": "What is the maximum penalty for a person who commits mischief by making a public road, bridge, or navigable waterway impassable or unsafe for travel and transport?",
+      "gold_key": "act-print-11#482",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "How can the Collector recover loans, interest, and costs granted under the Land Improvement Loans Act when they become due, and what are the different modes of recovery available to them?",
+      "gold_key": "act-print-51#7",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "Who is eligible to be appointed as the Director General of the Bangladesh Institute of Management and what are their responsibilities?",
+      "gold_key": "act-print-1473#10",
+      "found_section_rank": 12,
+      "hit@5_section": false
+    },
+    {
+      "question": "What happens to an order made by the High Court Division regarding an election petition after it is received by the Election Commission?",
+      "gold_key": "act-print-424#78",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "What penalties can a ship's master face if they try to avoid paying certain required sums, and how can they defend themselves in court?",
+      "gold_key": "act-print-89#45",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "What is the time limit for a distributor or service provider to reapply for a license after this law comes into effect if they were already licensed before the law was enacted?",
+      "gold_key": "act-print-949#3",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "What are the different sources of funds that are deposited into a district council's fund according to the law?",
+      "gold_key": "act-print-841#44",
+      "found_section_rank": 5,
+      "hit@5_section": true
+    },
+    {
+      "question": "What are the specific academic matters that require a recommendation from the Academic Council before the Rajshahi University of Engineering and Technology can make regulations regarding them?",
+      "gold_key": "act-print-908#37",
+      "found_section_rank": 20,
+      "hit@5_section": false
+    },
+    {
+      "question": "If a child is born as a result of rape, who will be responsible for the child's upbringing and maintenance, and until what age will the state provide financial support?",
+      "gold_key": "act-print-835#14",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "What are the limits of the right to self-defense if someone is trying to commit theft or vandalism against me?",
+      "gold_key": "act-print-11#112",
+      "found_section_rank": 3,
+      "hit@5_section": true
+    },
+    {
+      "question": "What is considered a criminal offense for a public servant who intentionally hides or misrepresents information about a planned crime that they are supposed to prevent?",
+      "gold_key": "act-print-11#128",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "What conditions must be met for a registered person to have their turnover tax registration cancelled in Bangladesh?",
+      "gold_key": "act-print-1106#10",
+      "found_section_rank": 14,
+      "hit@5_section": false
+    },
+    {
+      "question": "What are the requirements for transferring ownership of a hotel or restaurant in Bangladesh, and what steps must the new owner take to obtain a license?",
+      "gold_key": "act-print-1154#13",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "What are the requirements and conditions under which the Bangladesh Rice Research Institute can provide fellowships to individuals who have obtained degrees in agricultural sciences from recognized universities?",
+      "gold_key": "act-print-1219#21",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "What are the responsibilities of the librarian at the Bangladesh University of Professionals in terms of managing the library and its resources?",
+      "gold_key": "act-print-1016#34",
+      "found_section_rank": 3,
+      "hit@5_section": true
+    },
+    {
+      "question": "Who is responsible for overseeing the educational curriculum and admissions process at the Bangladesh Maritime University?",
+      "gold_key": "act-print-1130#7",
+      "found_section_rank": 12,
+      "hit@5_section": false
+    },
+    {
+      "question": "Where are the meetings of the executive board of the Bangladesh Economic Zone Authority typically held, and who presides over these meetings?",
+      "gold_key": "act-print-1053#26",
+      "found_section_rank": 2,
+      "hit@5_section": true
+    },
+    {
+      "question": "What is the process for appealing a decision made by a Revenue Officer regarding compensation for damages caused by military manoeuvres in Bangladesh?",
+      "gold_key": "act-print-176#5",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "What types of land are considered non-agricultural land under the Non-Agricultural Tenancy Act, and are there any specific exceptions or conditions that apply to this definition?",
+      "gold_key": "act-print-232#1",
+      "found_section_rank": 5,
+      "hit@5_section": true
+    },
+    {
+      "question": "What are the sources of funds for the Bangladesh Rehabilitation Council, and how are these funds managed and utilized?",
+      "gold_key": "act-print-1284#11",
+      "found_section_rank": 4,
+      "hit@5_section": true
+    },
+    {
+      "question": "What happens to the equipment of an unlicensed individual if they fail to obtain a license within 30 days of having their equipment seized?",
+      "gold_key": "act-print-949#22",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "মানিলন্ডারিং প্রতিরোধ আইনের অধীনে অবরুদ্ধ বা বাজেয়াপ্ত সম্পত্তির ব্যবস্থাপনার জন্য আদালত কি ধরনের ব্যব",
+      "gold_key": "act-print-1088#20",
+      "found_section_rank": 3,
+      "hit@5_section": true
+    },
+    {
+      "question": "What is the process for establishing institutes within the Habiganj Agricultural University for higher education and research purposes?",
+      "gold_key": "act-print-1341#23",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "What are the potential penalties for operating a vessel in a reckless or negligent manner that puts people's lives at risk in Bangladesh?",
+      "gold_key": "act-print-11#317",
+      "found_section_rank": 2,
+      "hit@5_section": true
+    },
+    {
+      "question": "What is the definition of 'বলাৎকার' under the Women and Children Repression Prevention Act of 2000 in Bangladesh?",
+      "gold_key": "act-print-835#1",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "কোন ব্যক্তি যদি তালিকাভুক্তিসীমা অতিক্রম করে কিন্তু নিবন্ধনসীমা অতিক্রম না করে, সেই ক্ষেত্রে তালিকাভু",
+      "gold_key": "act-print-1106#9",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "What are the potential penalties for someone who knowingly engages in behavior that could spread a life-threatening disease in Bangladesh?",
+      "gold_key": "act-print-11#306",
+      "found_section_rank": 5,
+      "hit@5_section": true
+    },
+    {
+      "question": "What is the time period for which the funds allocated by the Appropriation (Railways) Act are intended to be used?",
+      "gold_key": "act-print-615#2",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "Who has the authority to perform the duties of the Chairman of the Bangladesh Technical Education Board if the Chairman is absent or unable to perform their duties?",
+      "gold_key": "act-print-1279#11",
+      "found_section_rank": 4,
+      "hit@5_section": true
+    },
+    {
+      "question": "বাংলাদেশ ইউনিভার্সিটি অব প্রফেশনালস-এ পরীক্ষা পরিচালনার দায়িত্বে থাকা পরীক্ষক অসমর্থ হলে তার স্থলে অন",
+      "gold_key": "act-print-1016#50",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "What is the punishment for someone who intentionally helps or hides a person who has committed or is planning to commit robbery in Bangladesh?",
+      "gold_key": "act-print-11#250",
+      "found_section_rank": 4,
+      "hit@5_section": true
+    },
+    {
+      "question": "Can the government appoint an officer to investigate the affairs of a district council and what powers will that officer have during the investigation?",
+      "gold_key": "act-print-841#62",
+      "found_section_rank": 46,
+      "hit@5_section": false
+    },
+    {
+      "question": "What are the requirements for a political party to apply for registration under the Representation of the People Order, and are there any exceptions or provisional arrangements allowed for parties that do not yet have a fully ratified constitution?",
+      "gold_key": "act-print-424#108",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "What is the punishment for refusing to sign a statement when legally required to do so by a public servant?",
+      "gold_key": "act-print-11#212",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "কোন ধরনের আচরণের জন্য আনসার ব্যাটালিয়নের সদস্যদের বিরুদ্ধে বিভাগীয় কার্যধারা নেওয়া যেতে পারে?",
+      "gold_key": "act-print-1484#15",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "কোন সমবায় সমিতির সদস্য কি সমিতির কাছ থেকে ইজারা নেওয়া জমি অন্য কাউকে হস্তান্তর করতে পারে, এবং এই ধ",
+      "gold_key": "act-print-876#45",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "Who presides over a committee meeting when the chairperson is absent, according to the rules governing the proceedings of the committee?",
+      "gold_key": "act-print-934#4",
+      "found_section_rank": 6,
+      "hit@5_section": false
+    },
+    {
+      "question": "What are the potential penalties for intentionally setting fire to a building that is used as a place of worship or a human dwelling?",
+      "gold_key": "act-print-11#487",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "What are the penalties for election officials or agents who reveal the secrets of the voting process or share unauthorized information about marked ballots in Bangladesh?",
+      "gold_key": "act-print-424#94",
+      "found_section_rank": 4,
+      "hit@5_section": true
+    },
+    {
+      "question": "What are the responsibilities of teachers at the university, specifically in terms of teaching, research, student guidance, and other academic and administrative tasks?",
+      "gold_key": "act-print-1184#36",
+      "found_section_rank": 3,
+      "hit@5_section": true
+    },
+    {
+      "question": "What are the grounds on which a person can be considered ineligible to hold the position of chairman or full-time member of the Cox's Bazar Development Authority?",
+      "gold_key": "act-print-1179#7",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "How must loans granted by the Bangladesh Shilpa Bank in foreign currency be repaid, and what exchange rates apply to such repayments?",
+      "gold_key": "act-print-417#28",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "বাংলাদেশে ১৯৮২ সালের ২৪ মার্চ থেকে ১৯৮৬ সালের ১১ নভেম্বরের মধ্যে জারি করা অধ্যাদেশগুলি এখনও ক",
+      "gold_key": "act-print-1111#3",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "বাংলাদেশ অর্থনৈতিক অঞ্চল কর্তৃপক্ষের হিসাব কীভাবে পরিচালিত ও নিরীক্ষণ করা হয়?",
+      "gold_key": "act-print-1053#33",
+      "found_section_rank": 5,
+      "hit@5_section": true
+    },
+    {
+      "question": "Can the government appoint a first-class government official to manage a cooperative society that has received a government guarantee for its shares, loans, or debts?",
+      "gold_key": "act-print-876#20",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "What types of supplies are exempt from value-added tax under the Value Added Tax and Supplementary Duty Act, 2012?",
+      "gold_key": "act-print-1106#25",
+      "found_section_rank": 5,
+      "hit@5_section": true
+    },
+    {
+      "question": "What options do courts have when sentencing an offender to imprisonment that can be of either description, in terms of choosing between rigorous and simple imprisonment?",
+      "gold_key": "act-print-11#65",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "What are the rules for amending customs documents after they have been presented at the customhouse in Bangladesh, and who has the authority to make such amendments?",
+      "gold_key": "act-print-940#5",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "What benefits are available to the chairman or members of the Bangladesh Public Service Commission who are not otherwise entitled to a pension or other retirement benefits when they leave their position?",
+      "gold_key": "act-print-464#11",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "When did the Bangladesh Medical University Act, 1998 come into effect?",
+      "gold_key": "act-print-818#0",
+      "found_section_rank": 2,
+      "hit@5_section": true
+    },
+    {
+      "question": "What happens to the licenses, actions, and proceedings that were initiated under the Fish and Fish Products (Inspection and Quality Control) Ordinance of 1983 after it has been repealed by the new law?",
+      "gold_key": "act-print-1348#48",
+      "found_section_rank": 2,
+      "hit@5_section": true
+    },
+    {
+      "question": "কেউ যদি দুর্নীতি দমন কমিশনের কাছে তথ্য প্রদানে ব্যর্থ হয় বা মিথ্যা তথ্য প্রদান করে, তাহলে তার বিরুদ্ধে ক",
+      "gold_key": "act-print-914#27",
+      "found_section_rank": 3,
+      "hit@5_section": true
+    },
+    {
+      "question": "What does the term \"অতি গুরুত্বপূর্ণ ব্যক্তি\" mean under the Special Security Force law, and who can be considered as such an individual?",
+      "gold_key": "act-print-1389#1",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "What are the specific academic matters that require a recommendation from the Academic Council before the university can make any regulations?",
+      "gold_key": "act-print-870#38",
+      "found_section_rank": 47,
+      "hit@5_section": false
+    },
+    {
+      "question": "What is the maximum punishment for someone who steals while preparing to harm or restrain others to carry out the theft or escape with the stolen property?",
+      "gold_key": "act-print-11#431",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "What types of benefits or funds can Rangpur University establish for the welfare of its teachers, officers, and other employees?",
+      "gold_key": "act-print-864#55",
+      "found_section_rank": 2,
+      "hit@5_section": true
+    },
+    {
+      "question": "বিভাগীয় প্রধান নিয়োগের জন্য রাজশাহী প্রকৌশল ও প্রযুক্তি বিশ্ববিদ্যালয়ে কোন পদ্ধতি অনুসরণ কর",
+      "gold_key": "act-print-908#24",
+      "found_section_rank": 11,
+      "hit@5_section": false
+    },
+    {
+      "question": "What is the process for objecting to a government notification regarding an antiquity, and how long do I have to make my objection after being notified?",
+      "gold_key": "act-print-353#10",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "খুলনা মেডিক্যাল বিশ্ববিদ্যালয়ের সিন্ডিকেটের সদস্যদের মেয়াদকাল কত এবং তারা কতবার পুনরায় মনোনী",
+      "gold_key": "act-print-1371#19",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "ডিপজিটরি আইনের অধীনে কোন ডিপজিটরি বা ইস্যুয়ারের তদন্ত করার ক্ষমতা কমিশনের আছে কি, এবং তদন্তকারীরা ক",
+      "gold_key": "act-print-829#12",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "দুর্নীতি দমন কমিশনের কী কী কাজ ও দায়িত্ব রয়েছে?",
+      "gold_key": "act-print-914#17",
+      "found_section_rank": 2,
+      "hit@5_section": true
+    },
+    {
+      "question": "What are the sources of funds for the Bangladesh Technical Education Board, and how are these funds managed and utilized?",
+      "gold_key": "act-print-1279#16",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "What are the penalties for interfering with military manoeuvres or entering a camp without permission in an area where the army is conducting exercises?",
+      "gold_key": "act-print-176#6",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "If a person is living in a building that is subject to demolition under the Cox's Bazar Development Authority Act, but they are not the owner of the building, what steps must be taken to notify them to vacate the premises?",
+      "gold_key": "act-print-1179#25",
+      "found_section_rank": 2,
+      "hit@5_section": true
+    },
+    {
+      "question": "Can a doctor be held liable for causing harm to a patient if the treatment was done in good faith, with the patient's consent, and the harm was a known risk, even if the treatment ultimately results in the patient's death?",
+      "gold_key": "act-print-11#93",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "What responsibilities and tasks are assigned to the Council of the Bangladesh College of Physicians and Surgeons under the law?",
+      "gold_key": "act-print-1224#9",
+      "found_section_rank": 12,
+      "hit@5_section": false
+    },
+    {
+      "question": "What are the potential penalties for a parent who abandons a child under 12 years old with the intention of never returning to care for them?",
+      "gold_key": "act-print-11#361",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "What is the time limit for the tax authority to raise a demand for unpaid taxes for a fully export-oriented industrial entity in Bangladesh after the end of a tax period?",
+      "gold_key": "act-print-1106#91",
+      "found_section_rank": null,
+      "hit@5_section": false
+    },
+    {
+      "question": "Which medical colleges, dental colleges, nursing colleges, and other medical institutions will be affiliated with the university under this law?",
+      "gold_key": "act-print-1184#50",
+      "found_section_rank": 8,
+      "hit@5_section": false
+    },
+    {
+      "question": "What are the potential penalties for someone who causes serious injury to another person in response to sudden and severe provocation, but did not intend to harm anyone else?",
+      "gold_key": "act-print-11#380",
+      "found_section_rank": 3,
+      "hit@5_section": true
+    },
+    {
+      "question": "What is the punishment for someone who knowingly serves on a jury or as an assessor in a case when they are not legally entitled to do so?",
+      "gold_key": "act-print-11#265",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "Can a prisoner who has not yet been convicted of a crime meet with their lawyer in private while they are being held in prison?",
+      "gold_key": "act-print-69#39",
+      "found_section_rank": 2,
+      "hit@5_section": true
+    },
+    {
+      "question": "What happens to seized unauthorized newspapers or news-sheets after they are taken by the authorities, and what options do the courts have for dealing with them?",
+      "gold_key": "act-print-437#23",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "Which government department is responsible for providing state guarantees under the Government Loan Act, 2022, and what are the rules governing the provision of such guarantees?",
+      "gold_key": "act-print-1413#4",
+      "found_section_rank": 11,
+      "hit@5_section": false
+    },
+    {
+      "question": "What are the potential penalties for providing false information to the Bangladesh Shilpa Bank in connection with a loan or other financial assistance?",
+      "gold_key": "act-print-417#40",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "ব্যাংক-কোম্পানীতে সর্বোচ্চ কতজন পরিচালক থাকতে পারে এবং তাদের মধ্যে কতজন স্বতন্ত্র পরিচালক থাকা আবশ",
+      "gold_key": "act-print-1430#8",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "What is the penalty for graving, breaming, or smoking a vessel in a port in Bangladesh without following the conservator's directions or within prohibited areas?",
+      "gold_key": "act-print-89#22",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "What are the penalties for a member of the Border Guard who intentionally leaves out important information or fails to prepare and send reports as required by their duties?",
+      "gold_key": "act-print-1067#43",
+      "found_section_rank": 60,
+      "hit@5_section": false
+    },
+    {
+      "question": "সমবায় সমিতির সম্পত্তি নিলামে বিক্রির ক্ষেত্রে সমিতির ব্যবস্থাপনা কমিটির সদস্য বা কর্মচারীদের ক্রয়ে অং",
+      "gold_key": "act-print-876#79",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "What are the grounds on which the District Magistrate can cancel the authentication of a declaration for a newspaper, and what recourse does the affected person have if they disagree with the cancellation decision?",
+      "gold_key": "act-print-437#21",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "What laws, in addition to the Non-Agricultural Tenancy Act, still apply to non-agricultural tenancies in Bangladesh, and how do they interact with this Act?",
+      "gold_key": "act-print-232#37",
+      "found_section_rank": 12,
+      "hit@5_section": false
+    },
+    {
+      "question": "এসিড নিয়ন্ত্রণের জন্য সরকার কীভাবে বিধি প্রণয়ন করতে পারে এবং সেই বিধিতে কী কী বিষয়ে বিধান থাকতে পার",
+      "gold_key": "act-print-882#50",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "What is the punishment for someone who knowingly delivers or tries to pass on counterfeit coins to another person with the intention of committing fraud?",
+      "gold_key": "act-print-11#286",
+      "found_section_rank": 8,
+      "hit@5_section": false
+    },
+    {
+      "question": "What are the qualifications and responsibilities required for the position of Treasurer at the Narayanganj Science and Technology University?",
+      "gold_key": "act-print-1479#11",
+      "found_section_rank": 10,
+      "hit@5_section": false
+    },
+    {
+      "question": "When did Pakistani bank notes of 5 and 10 rupees denomination, which were previously made legal tender in Bangladesh, stop being accepted as legal tender in the country?",
+      "gold_key": "act-print-393#3",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "What is the punishment for someone who knowingly possesses a false weighing instrument, weight, or measure with the intention of using it to cheat others?",
+      "gold_key": "act-print-11#303",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "What are the obligations and potential penalties for a landowner if an unlawful assembly or riot occurs on their property in Bangladesh?",
+      "gold_key": "act-print-11#175",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "যদি কোন ব্যক্তি যৌতুকের জন্য তার স্ত্রীকে মারাত্মকভাবে জখম করে, তাহলে তার বিরুদ্ধে কী ধরনের শাস্তি হত",
+      "gold_key": "act-print-835#12",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "Are imported goods brought into a private export processing zone in Bangladesh subject to customs duty, value-added tax, or other taxes and fees?",
+      "gold_key": "act-print-810#14",
+      "found_section_rank": 7,
+      "hit@5_section": false
+    },
+    {
+      "question": "পেট্রোলিয়াম আমদানি, পরিবহন বা শোধনের সময় যদি কোনো বিপদ দেখা দেয়, তাহলে সরকার কীভাবে জনসাধারণকে",
+      "gold_key": "act-print-1190#31",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "How can the Council of the Chartered Secretaries form committees to carry out its responsibilities under the Chartered Secretaries Act, 2010?",
+      "gold_key": "act-print-1045#12",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "How can a person recover costs awarded to them by the High Court Division in an election dispute, and what are the procedures for enforcing such an order?",
+      "gold_key": "act-print-424#83",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "কক্সবাজার উন্নয়ন কর্তৃপক্ষের আওতাধীন এলাকার উন্নয়ন ও নির্মাণ পরিকল্পনা কেমন করে অনুমোদন করা হয়?",
+      "gold_key": "act-print-1179#19",
+      "found_section_rank": 1,
+      "hit@5_section": true
+    },
+    {
+      "question": "Who is responsible for appointing the executive chairman and members of the executive board of the Bangladesh Economic Zone Authority?",
+      "gold_key": "act-print-1053#25",
+      "found_section_rank": 17,
+      "hit@5_section": false
+    },
+    {
+      "question": "Can a person be held criminally liable for an action they took while intoxicated, if they were unaware that the substance was being administered to them or did not consent to its use?",
+      "gold_key": "act-print-11#90",
+      "found_section_rank": 3,
+      "hit@5_section": true
+    }
+  ]
+}

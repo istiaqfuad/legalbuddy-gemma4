@@ -1,0 +1,35 @@
+[project]
+name = "api"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [{ name = "istiaqfuad", email = "istiaqurrahmanfuad@gmail.com" }]
+requires-python = ">=3.13"
+dependencies = [
+    "shared",
+    "fastapi>=0.135.1",
+    "google-genai>=1.67.0",
+    "instructor>=1.14.5",
+    "jsonref>=1.1.0",
+    "langsmith>=0.4.0",
+    "openai>=2.1.0",
+    "pydantic>=2.11.10",
+    "pydantic-settings>=2.13.1",
+    "qdrant-client>=1.17.1",
+    "sentence-transformers>=3.0.0",
+    "torch>=2.2.0",
+    "uvicorn>=0.41.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv.sources]
+shared = { workspace = true }
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/api"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/", "tests/", "README.md"]

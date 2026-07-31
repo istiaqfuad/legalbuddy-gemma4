@@ -1,0 +1,29 @@
+[project]
+name = "ingestion"
+version = "0.1.0"
+description = "Ingest Bangladesh legal acts into Qdrant."
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "shared",
+    "python-dotenv>=1.2.2",
+    "qdrant-client>=1.17.1",
+    "sentence-transformers>=3.0.0",
+    "torch>=2.2.0",
+    "pymupdf>=1.24.0",
+]
+
+[project.scripts]
+ingest = "ingestion.pipeline:main"
+cases-build = "ingestion.cases_build:main"
+cases-ingest = "ingestion.cases_ingest:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv.sources]
+shared = { workspace = true }
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ingestion"]
