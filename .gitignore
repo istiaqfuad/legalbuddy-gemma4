@@ -29,6 +29,7 @@ data/
 .agents/
 .claude/
 .vscode/
+.sisyphus/
 skills-lock.json
 
 # graphify generated knowledge graph
