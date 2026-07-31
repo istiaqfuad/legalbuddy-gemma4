@@ -53,6 +53,10 @@ law_buddy/
 
 ## Quick Start (Recommended)
 
+> Full-stack deployment (web + api + qdrant + the 4-bit Gemma 4 LLM server):
+> see [docs/docker-deployment.md](docs/docker-deployment.md) and
+> [`docker-compose.full.yml`](docker-compose.full.yml).
+
 1. Create your local env file from the template:
 
 ```bash
