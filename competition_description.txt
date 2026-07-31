@@ -1,0 +1,115 @@
+Overview
+The next generation of open models is here. Welcome to the Gemma 4 Hackathon Sprint, a fast-paced, 1-day in-person hackathon where you'll get hands-on with the most capable open models from Google DeepMind.
+
+This hackathon is not about writing polished, production-ready code. It is a sprint to experiment, learn, break things, and build great solutions to real-world problems in just a few hours. You have access to the newly released Gemma 4 models. Team up, brainstorm a wild idea, hack a prototype, and pitch before the clock runs out. Bring your laptop, your boldest ideas, and let's build something amazing together!
+
+
+Description
+The Build with Gemma 4: ML, AI, Deep Learning & NLP Community Hackathon invites university students across Bangladesh to build innovative AI applications using Gemma 4, Google's latest family of open models.
+
+Whether you're solving challenges in education, healthcare, accessibility, productivity, agriculture, finance, climate, or social impact, this hackathon is your opportunity to transform an idea into a working AI application.
+
+This is a hybrid hackathon. Students from Southeast University are welcome to participate in person during the offline event, while students from any university in Bangladesh can build and submit their projects online through the Kaggle Community Hackathon platform.
+
+Projects must use Gemma 4 as the primary AI model and demonstrate meaningful integration of its capabilities to solve a real-world problem.
+
+Your Goal
+Build an AI application powered by Gemma 4 that addresses a real-world problem.
+
+Your submission should clearly demonstrate:
+
+The problem you are solving Why it matters How Gemma 4 is integrated into your solution The technical implementation and architecture A working prototype or live demonstration The potential real-world impact of your application
+
+Projects will be evaluated based on:
+
+💡 Innovation (30%) ⚙️ Technical Implementation (30%) 🌍 Real-world Impact (20%) 🎨 User Experience (10%) 🎤 Presentation & Demo (10%)
+
+A strong submission combines technical excellence with a compelling story, demonstrating both what you built and why it creates meaningful value.
+
+
+
+Submission Requirements
+A valid submission must include all of the following:
+
+Kaggle Writeup
+Public Code Repository (GitHub or Kaggle Notebook)
+Working Demo (Hosted application, video demonstration, or runnable Kaggle Notebook)
+
+All submissions must be completed and submitted through the Kaggle Community Hackathon platform before the submission deadline. Draft or unsubmitted Writeups will not be considered for judging.
+
+To create a submission, click the New Writeup button on the competition page. After saving your Writeup, click Submit in the top-right corner to officially enter the competition. Each team may submit one Writeup, which can be edited, unsubmitted, and resubmitted any number of times before the submission deadline.
+
+Note: If you attach a private Kaggle Resource to your public Kaggle Writeup, it will automatically become public after the submission deadline.
+
+1. Kaggle Writeup
+The Kaggle Writeup serves as your official project report and will be the primary document used by the judges to evaluate your submission.
+
+Your Writeup should clearly explain:
+
+The problem your team is solving
+Why the problem is important
+Your proposed solution
+How Gemma 4 was integrated into the application
+The overall system architecture
+Technical challenges encountered and how they were addressed
+Future improvements and potential impact
+
+Your Writeup should include a title, subtitle, and a detailed explanation of your project. The Writeup should not exceed 1,500 words. Submissions exceeding this limit may be subject to penalties.
+The below assets must be attached to the Writeup to be eligible:
+
+Public Code Repository
+Every submission must include a public code repository (GitHub or Kaggle Notebook).
+
+The repository should contain:
+
+Complete source code
+README with installation and usage instructions
+Dependency list
+Any required configuration files
+
+The repository must clearly demonstrate the implementation of Gemma 4 and remain publicly accessible throughout the judging process.
+
+Attach the repository link under Attachments → Project Links in your Kaggle Writeup.
+
+Live Demo
+Every submission must include a working demonstration of the project.
+
+Accepted formats include:
+
+Hosted web application
+Mobile application
+Desktop application
+Interactive Kaggle Notebook
+Recorded video demonstration
+Recorded terminal demonstration
+
+If your project cannot be deployed during the hackathon, a recorded demonstration showcasing all major features is acceptable.
+
+The demo must be publicly accessible without requiring authentication or paid access.
+
+Attach the demo link or files under Attachments in your Kaggle Writeup.
+
+Submit the Google form after your project submission is done in kaggle
+Kindly fill out thie form (once your kaggle submission is complete) : Link
+
+Additional Requirements
+Projects must use Gemma 4 as the primary AI model.
+Gemma 4 must be the only Large Language Model (LLM) used to power the application's AI capabilities.
+Teams may use traditional machine learning libraries, computer vision models, OCR libraries, speech processing libraries, databases, vector databases, APIs, and other non-generative AI techniques where appropriate, provided they support the application and do not replace Gemma 4 as the primary AI model.
+The use of any other LLMs or generative foundation models is not permitted.
+Projects that do not demonstrate meaningful integration of Gemma 4 may be disqualified from judging.
+
+
+
+
+
+Evaluation
+The judging process is designed to be swift and impactful, reflecting the rapid 1-day sprint format of this event. Our panel of experts will evaluate your submissions based on how effectively you utilize Gemma 4 models to build innovative and practical applications.
+
+Rather than expecting production-ready polish, judges will focus on the core functionality, creativity, and real-world impact of your prototypes. Below is the official scoring rubric that will be used to evaluate each Kaggle Writeup and accompanying demo:
+
+Criteria	Description	Points
+Gemma Integration (30%)	Did they effectively utilize Gemma 4? Is the model core to the solution?	0-30
+Innovation & Impact (30%)	Does the app solve a meaningful problem? Is the approach creative and relevant?	0-30
+Functionality (20%)	Does the prototype actually work? Is the demo convincing?	0-20
+Presentation & Writeup (20%)	Is the Kaggle Writeup clear? Does it clearly explain the problem and solution?	0-20

@@ -1,0 +1,14 @@
+$schema: https://azuremlschemas.azureedge.net/latest/managedOnlineDeployment.schema.json
+name: lawbuddy-deployment
+endpoint_name: lawbuddy-endpoint
+environment:
+  image: vllm/vllm-openai:latest
+instance_type: Standard_NC24ads_A100_v4
+instance_count: 1
+environment_variables:
+  MODEL_ID: /var/azureml-app/model
+command: >-
+  python -m vllm.entrypoints.openai.api_server 
+  --model /var/azureml-app/model 
+  --dtype bfloat16 
+  --max-model-len 4096
