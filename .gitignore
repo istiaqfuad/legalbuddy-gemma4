@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[oc]
+.venv/
+build/
+dist/
+*.egg-info
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Model artifacts — too large for GitHub (100MB/file limit)
+lawbuddy_gemma4_16bit_lora_prod/
+*.safetensors
+*.gguf
+adapter.tar.gz
+
+# Raw datasets (1.9GB of PDFs) and derived data
+legal_dataset/
+parsed_cases.jsonl
+parsed_cases.jsonl.gz
+parsed_cases_b64.txt
+acts.tar.gz
+data/
+
+# Tooling / editor configs
+.agents/
+.claude/
+.vscode/
+skills-lock.json
+
+# graphify generated knowledge graph
+graphify-out/
