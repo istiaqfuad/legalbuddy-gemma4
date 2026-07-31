@@ -1,0 +1,111 @@
+# Self-contained full-stack deployment for LawBuddy.
+#
+# Runs the entire product on a single host with one command:
+#   web (Next.js) + api (FastAPI RAG) + qdrant (vector store)
+#   + llm (llama.cpp serving the fine-tuned 4-bit Gemma 4 GGUF)
+#
+# Usage: see docs/docker-deployment.md
+#
+# Before first start you must provide:
+#   1. models/lawbuddy-q4.gguf   — the quantized model artifact (bind-mounted ro)
+#   2. .env                      — copy from .env.example and fill in
+#   3. Qdrant data               — restore a snapshot or run the ingestion
+#      pipeline against qdrant:6333 (collections are NOT committed to the repo)
+#
+# GPU: swap the llm image to ghcr.io/ggml-org/llama.cpp:server-cuda-b4738 and
+# uncomment the deploy block under llm.
+
+services:
+  llm:
+    image: ghcr.io/ggml-org/llama.cpp:server-b4738
+    command:
+      - -m
+      - /models/lawbuddy-q4.gguf
+      - --alias
+      - lawbuddy-gemma4   # must match GROQ_MODEL in .env
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8080"
+      - -c
+      - "4096"
+      - -n
+      - "512"
+    volumes:
+      - ./models:/models:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8080/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    # NVIDIA GPU variant (swap image to :server-cuda-b4738):
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    # Published for the ingestion tooling on the host; internal once ingested.
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant-storage:/qdrant/storage
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/6333'"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    env_file:
+      - .env
+    # Single process, no --reload: one e5 model in RAM, bounded memory.
+    command: ["uvicorn", "api.app:app", "--host", "0.0.0.0", "--port", "8000"]
+    depends_on:
+      qdrant:
+        condition: service_healthy
+      llm:
+        condition: service_healthy
+    ports:
+      - "8000:8000"   # optional — remove for a public host
+    restart: unless-stopped
+    healthcheck:
+      # /rag/health returns 200 only once the embedding model is warm AND
+      # Qdrant is verified, so this doubles as the real readiness probe.
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/rag/health', timeout=3).status == 200 else 1)"
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 180s   # first boot downloads the embedding model
+    volumes:
+      - hf-cache:/home/app/.cache/huggingface
+
+  web:
+    build:
+      context: ./apps/web
+    environment:
+      - API_URL=http://api:8000
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+
+volumes:
+  hf-cache:
+  qdrant-storage:
