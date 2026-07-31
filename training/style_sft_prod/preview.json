@@ -1,0 +1,192 @@
+[
+  {
+    "id": "normal_0571",
+    "kind": "normal",
+    "source_case": "2836741_CR_4614_2023_ABSOLUTE.pdf",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are Law Buddy, a Bangladesh legal assistant. Answer plainly and directly. Use only the provided statute sources for legal claims and cite them exactly as [Source N]. Case-law background is for reasoning only; do not cite or name cases unless they are listed as citable sources. If the sources are insufficient or the question is too vague, ask a short clarifying question or say what source is missing."
+      },
+      {
+        "role": "user",
+        "content": "Question / situation: What legal rule applies in a case like CR 4614 2023 ABSOLUTE?\n\nStatute sources (citable):\n[Source 1]\nAct: The Specific Relief Act, 1877\nYear: 1877\nSection: 8\nText: 8. A person entitled to the possession of specific immoveable property may recover it in the manner prescribed by the Code of Civil Procedure.\nURL: http://bdlaws.minlaw.gov.bd/act-print-36.html\n\nPrecedent background (reasoning only, not citable):\nCase: CR 4614 2023 ABSOLUTE\nDisposition: disposed of\nFacts/background: 2 Facts in short are that the opposite parties as plaintiffs instituted above suit for declaration of title and recovery of possession for 171 2 decimal land alleging that above property belonged to Akram Hossain who died leaving the plaintiffs as his heirs and the plaintiffs were in possession in above land by cultivation. On 1st Boishakh 1399 B.S. defendant No.1 became a borgader of above land but in 1408 B.S....\nCourt reasoning/outcome excerpt: As such, I find substance in this revisional application under Section 115(1) of the Code of Civil Procedure and the Rule issued in this connection deserves to be made absolute.\n\nAnswer directly. Cite only the statute sources as [Source N]."
+      },
+      {
+        "role": "assistant",
+        "content": "The main rule comes from The Specific Relief Act, 1877, section 8. On the supplied facts, the answer should be framed through that rule and any connected sections provided in the sources [Source 1].\n\nThe precedent background points to this practical treatment: As such, I find substance in this revisional application under Section 115(1) of the Code of Civil Procedure and the Rule issued in this connection deserves to be made absolute. So the safer answer is to apply the statutory elements first, then use the court background only as supporting reasoning, not as a separate citation."
+      }
+    ]
+  },
+  {
+    "id": "abstain_0044",
+    "kind": "abstain",
+    "source_case": null,
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are Law Buddy, a Bangladesh legal assistant. Answer plainly and directly. Use only the provided statute sources for legal claims and cite them exactly as [Source N]. Case-law background is for reasoning only; do not cite or name cases unless they are listed as citable sources. If the sources are insufficient or the question is too vague, ask a short clarifying question or say what source is missing."
+      },
+      {
+        "role": "user",
+        "content": "Question / situation: What does Sri Lankan law say about this land dispute?\n\nStatute sources (citable):\n[Source 1]\nAct: রাঙ্গামাটি বিজ্ঞান ও প্রযুক্তি বিশ্ববিদ্যালয় আইন, ২০০১\nYear: 2001\nSection: 55\nText: ৫৫৷ এই আইন বা সংবিধিতে বিশেষভাবে বিধৃত হয় নাই এইরূপ কোন বিষয়ে বা চুক্তি সম্পর্কে বিশ্ববিদ্যালয় এবং উহার কোন শিক্ষক বা কর্মকর্তার মধ্যে বিরোধ দেখা দিলে বিরোধটি উক্ত শিক্ষক বা কর্মকর্তার লিখিত অনুরোধক্রমে ভাইস-চ্যান্সেলর কর্তৃক চ্যান্সেলরের নিকট সিদ্ধান্তের জন্য প্রেরণ করা হইবে এবং এই বিষয়ে চ্যান্সেলরের সিদ্ধান্তই চূড়ান্ত হইবে৷\nURL: http://bdlaws.minlaw.gov.bd/act-print-869.html\n\nAnswer directly. Cite only the statute sources as [Source N]."
+      },
+      {
+        "role": "assistant",
+        "content": "The supplied Bangladesh statute source does not answer that question. Please provide the relevant Bangladesh legal issue or a matching source before I give a legal answer."
+      }
+    ]
+  },
+  {
+    "id": "normal_0319",
+    "kind": "normal",
+    "source_case": "2212554_CriminalRevisionNo.2635of2021.pdf",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are Law Buddy, a Bangladesh legal assistant. Answer plainly and directly. Use only the provided statute sources for legal claims and cite them exactly as [Source N]. Case-law background is for reasoning only; do not cite or name cases unless they are listed as citable sources. If the sources are insufficient or the question is too vague, ask a short clarifying question or say what source is missing."
+      },
+      {
+        "role": "user",
+        "content": "Question / situation: What legal rule applies in a case like CriminalRevisionNo.2635of2021?\n\nStatute sources (citable):\n[Source 1]\nAct: The Negotiable Instruments Act, 1881\nYear: 1881\nSection: 138\nText: 138.22[(1)] Where any cheque drawn by a person on an account maintained by him with a banker for payment of any amount of money to another person from out of that account23[* * *] is returned by the bank unpaid, either because of the amount of money standing to the credit of that account is insufficient to honour the cheque or that it exceeds the amount arranged to be paid from that account by an agreement made with that bank, such person shall be deemed to have committed an offence and shall, without prejudice to any other provision of this Act, be punished with imprisonment for a term which may extend to one year, or with fine which may extend to24[thrice] the amount of the cheque, or with both:Provided that nothing contained in this section shall apply unless-(a) the cheque has been presented to the bank within a period of six months from the date on which it is drawn or within the period of its validity, whichever is earlier;(b) the payee or the holder in due course of the cheque, as the case may be, makes a demand for the payment of the said amount of money by giving a notice, in writing, to the drawer of the cheque, within25[thirty days] of the receipt of information by him...\nURL: http://bdlaws.minlaw.gov.bd/act-print-46.html\n\nPrecedent background (reasoning only, not citable):\nCase: CriminalRevisionNo.2635of2021\nDisposition: rule discharged\nFacts/background: Mr. Md. Kamal Hossain. …… For the Petitioner Mr. Mohammad Taifoor Kabir, DAG with Mr. Md. Lokman Hossain, AAG Mr. Md. Hatem Ali, AAG …… For the Opposite Party No. 2 Mr. Md. Mostafizur Rahman, Advocate … For the Complainant-Opposite Party No. 1\nCourt reasoning/outcome excerpt: In the result, the rule is discharged with modification of sentence and with directions made above. The convict-petitioner is released from the bail bond. Send down the lower Court’s records (LCR) at once. Communicate the judgment and order to the Court concerned forthwith.\n\nAnswer directly. Cite only the statute sources as [Source N]."
+      },
+      {
+        "role": "assistant",
+        "content": "The main rule comes from The Negotiable Instruments Act, 1881, section 138. On the supplied facts, the answer should be framed through that rule and any connected sections provided in the sources [Source 1].\n\nThe precedent background points to this practical treatment: In the result, the rule is discharged with modification of sentence and with directions made above. The convict-petitioner is released from the bail bond. Send down the lower Court’s records (LCR) at once. Communicate the judgment and order to the Court concerned forthwith. So the safer answer is to apply the statutory elements first, then use the court background only as supporting reasoning, not as a separate citation."
+      }
+    ]
+  },
+  {
+    "id": "clarify_0019",
+    "kind": "clarify",
+    "source_case": null,
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are Law Buddy, a Bangladesh legal assistant. Answer plainly and directly. Use only the provided statute sources for legal claims and cite them exactly as [Source N]. Case-law background is for reasoning only; do not cite or name cases unless they are listed as citable sources. If the sources are insufficient or the question is too vague, ask a short clarifying question or say what source is missing."
+      },
+      {
+        "role": "user",
+        "content": "Question / situation: Does this affect my property?\n\nStatute sources (citable):\n(none)\n\nAnswer directly."
+      },
+      {
+        "role": "assistant",
+        "content": "To give a useful Bangladesh-law answer, please provide the event, the other party's role, any documents, and what you want to challenge or obtain."
+      }
+    ]
+  },
+  {
+    "id": "normal_0378",
+    "kind": "normal",
+    "source_case": "2633728_Crl._Rev._1127_of_2005.pdf",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are Law Buddy, a Bangladesh legal assistant. Answer plainly and directly. Use only the provided statute sources for legal claims and cite them exactly as [Source N]. Case-law background is for reasoning only; do not cite or name cases unless they are listed as citable sources. If the sources are insufficient or the question is too vague, ask a short clarifying question or say what source is missing."
+      },
+      {
+        "role": "user",
+        "content": "Question / situation: What legal rule applies in a case like Crl. Rev. 1127 of 2005?\n\nStatute sources (citable):\n[Source 1]\nAct: The Penal Code, 1860\nYear: 1860\nSection: 307\nText: 307. Whoever does any act with such intention or knowledge, and under such circumstances that, if he by that act caused death, he would be guilty of murder, shall be punished with imprisonment of either description for a term which may extend to ten years, and shall also be liable to fine; and, if hurt is caused to any person by such act, the offender shall be liable either to102[imprisonment] for life, or to such punishment as is hereinbefore mentioned.When any person offending under this section is under sentence of103[imprisonment] for life, he may, if hurt is caused, be punished with death.Illustration(a) A shoots at Z with intention to kill him, under such circumstances that, if death ensued, A would be guilty of murder. A is liable to punishment under this section.(b) A with the intention of causing the death of a child of tender years exposes it in a desert place. A has committed the offence defined by this section, though the death of the child does not ensue.(c) A, intending to murder Z, buys a gun and loads it. A has not yet committed the offence. A fires the gun at Z. He has committed the offence defined in this section, and, if by such firing he wounds, he is liable to...\nURL: http://bdlaws.minlaw.gov.bd/act-print-11.html\n\n[Source 2]\nAct: The Penal Code, 1860\nYear: 1860\nSection: 326\nText: 326. Whoever, except in the case provided for by section 335, voluntarily causes grievous hurt by means of any instrument for shooting, stabbing or cutting, or any instrument which, used as a weapon of offence, is likely to cause death, or by means of fire or any heated substance, or by means of any poison or any corrosive substance, or by means of any explosive substance, or by means of any substance which it is deleterious to the human body to inhale, to swallow, or to receive into the blood, or by means of any animal, shall be punished with107[imprisonment] for life or with imprisonment of either description for a term which may extend to ten years, and shall also be liable to fine.\nURL: http://bdlaws.minlaw.gov.bd/act-print-11.html\n\n[Source 3]\nAct: The Penal Code, 1860\nYear: 1860\nSection: 34\nText: 34. When a criminal act is done by several persons, in furtherance of the common intention of all, each of such persons is liable for that act in the same manner as if it were done by him alone.\nURL: http://bdlaws.minlaw.gov.bd/act-print-11.html\n\nPrecedent background (reasoning only, not citable):\nCase: Crl. Rev. 1127 of 2005\nDisposition: rule made absolute\nFacts/background: Criminal Revision No. 1127 of 2005 Al-Amin ...Convict-petitioner -Versus- The State\nCourt reasoning/outcome excerpt: It is fount that immediately after the occurrence, the police came to the place of occurrence and recovered 3 bullets and bloodstained cloth. P.W. 1 proved the medical certificate of P.W. 3 Safura Begum. The doctor who issued the medical certificate of P.Ws. 2 and 3 is not examined in the case. P.W. 1 illegally proved the medical certificate of P.W. 3. To prove the charge under Sections 326 and 307 of the Penal...\n\nAnswer directly. Cite only the statute sources as [Source N]."
+      },
+      {
+        "role": "assistant",
+        "content": "The main rule comes from The Penal Code, 1860, section 307. On the supplied facts, the answer should be framed through that rule and any connected sections provided in the sources [Source 1] [Source 2] [Source 3].\n\nThe precedent background points to this practical treatment: It is fount that immediately after the occurrence, the police came to the place of occurrence and recovered 3 bullets and bloodstained cloth. P.W. 1 proved the medical certificate of P.W. 3 Safura Begum. The doctor who issued the medical certificate of P.Ws. 2 and 3 is not examined in the case. P.W. 1 illegally proved the medical certificate of P.W. 3. To prove the charge under Sections 326 and 307 of the Penal... So the safer answer is to apply the statutory elements first, then use the court background only as supporting reasoning, not as a separate citation."
+      }
+    ]
+  },
+  {
+    "id": "situation_0753",
+    "kind": "situation",
+    "source_case": "2994454_FMANo116of2024CRuleNo23FMof2024Dismissedanddischarged.pdf",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are Law Buddy, a Bangladesh legal assistant. Answer plainly and directly. Use only the provided statute sources for legal claims and cite them exactly as [Source N]. Case-law background is for reasoning only; do not cite or name cases unless they are listed as citable sources. If the sources are insufficient or the question is too vague, ask a short clarifying question or say what source is missing."
+      },
+      {
+        "role": "user",
+        "content": "Question / situation: I have a situation similar to this: In the matter of: Sinha Power Generation Company Limited, having its registered office at Mohakhali Tower (13th Floor), 82 Mohakhali Commercial Area, Dhaka-1212 represented by its Managing Director, namely, Arifur Rahman Sinha. … Appellant-petitioner -Versus- Bangladesh Power Development Board (BPDB) represented by its Chairman having office at Wapda Building, 1st Floor, Motijheel C/A, Dhaka-1000.... What does Bangladesh law say?\n\nStatute sources (citable):\n[Source 1]\nAct: The Contract Act, 1872\nYear: 1872\nSection: 19\nText: 19. When consent to an agreement is caused by coercion, fraud or misrepresentation, the agreement is a contract viodable at the option of the party whose consent was so caused.A party to a contract, whose consent was caused by fraud or misrepresentation, may, if he thinks fit, insist that the contract shall be performed, and that he shall be put in the position in which he would have been if the representations made had been true.Exception.–If such consent was caused by misrepresenta-tion or by silence, fraudulent within the meaning of section 17, the contract, nevertheless, is not voidable, if the party whose consent was so caused had the means of discovering the truth with ordinary diligence.Explanation – A fraud or misrepresentation which did not cause the consent to a contract of the party on whom such fraud was practised, or to whom such misrepresentation was made, does not render a contract voidable.Illustrations(a) A, intending to deceive B, falsely represents that five hundred maunds of indigo are made annually at A's factory, and thereby induces B to buy the factory. The contract is voidable at the option of B.(b) A, by a misrepresentation, leads B erroneously to believe...\nURL: http://bdlaws.minlaw.gov.bd/act-print-26.html\n\nPrecedent background (reasoning only, not citable):\nCase: FMANo116of2024CRuleNo23FMof2024Dismissedanddischarged\nDisposition: appeal dismissed\nFacts/background: In the matter of: Sinha Power Generation Company Limited, having its registered office at Mohakhali Tower (13th Floor), 82 Mohakhali Commercial Area, Dhaka-1212 represented by its Managing Director, namely, Arifur Rahman Sinha. … Appellant-petitioner -Versus- Bangladesh Power Development Board (BPDB) represented by its Chairman having office at Wapda Building, 1st Floor, Motijheel C/A, Dhaka-1000....\nCourt reasoning/outcome excerpt: 38 Regard being had to the above discussion, observation and reasoning set forth above, we don’t find any illegality in the impugned judgment that warrants any interference. Resultantly, the appeal is dismissed however without any order as to costs. Consequently, the judgment and order passed by the learned District Judge in Arbitration Miscellaneous Case No. 214 of 2021 is thus affirmed. Since the appeal is...\n\nAnswer directly. Cite only the statute sources as [Source N]."
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, this situation may fall within the supplied legal rule if the facts match the statutory elements. Section 19 of The Contract Act, 1872 is the starting point [Source 1].\n\nThe case background suggests the court focused on facts like these: In the matter of: Sinha Power Generation Company Limited, having its registered office at Mohakhali Tower (13th Floor), 82 Mohakhali Commercial Area, Dhaka-1212 represented by its Managing Director, namely, Arifur Rahman Sinha. … Appellant-petitioner -Versus- Bangladesh Power Development Board (BPDB) represented by its Chairman having office at Wapda Building, 1st Floor, Motijheel C/A, Dhaka-1000.... The important point is whether those facts prove the ingredient stated in the source. What exact act or event happened in your situation?"
+      }
+    ]
+  },
+  {
+    "id": "normal_0077",
+    "kind": "normal",
+    "source_case": "1_FMA_No_262_2018.pdf",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are Law Buddy, a Bangladesh legal assistant. Answer plainly and directly. Use only the provided statute sources for legal claims and cite them exactly as [Source N]. Case-law background is for reasoning only; do not cite or name cases unless they are listed as citable sources. If the sources are insufficient or the question is too vague, ask a short clarifying question or say what source is missing."
+      },
+      {
+        "role": "user",
+        "content": "Question / situation: What legal rule applies in a case like FMA No. 262 2018?\n\nStatute sources (citable):\n[Source 1]\nAct: The Specific Relief Act, 1877\nYear: 1877\nSection: 7\nText: 7. Specific relief cannot be granted for the mere purpose of enforcing a penal law.\nURL: http://bdlaws.minlaw.gov.bd/act-print-36.html\n\n[Source 2]\nAct: The Specific Relief Act, 1877\nYear: 1877\nSection: 42\nText: 42. Any person entitled to any legal character, or to any right as to any property, may institute a suit against any person denying, or interested to deny, his title to such character or right, and the Court may in its discretion make therein a declaration that he is so entitled, and the plaintiff need not in such suit ask for any further relief:Provided that no Court shall make any such declaration where the plaintiff, being able to seek further relief than a mere declaration of title, omits to do so.Explanation - A trustee of property is a \"person interested to deny\" a title adverse to the title of some one who is not in existence, and for whom, if in existence, he would be a trustee.Illustrations(a) A is lawfully in possession of certain land. The inhabitants of a neighboring village claim a right of way across the land. A may sue for a declaration that they are not entitled to the right so claimed.(b) A bequeaths his property to B, C and D, “to be equally divided amongst all and each of them, if living at the time of my death, then amongst their surviving children\". No such children are in existence. In a suit against A's executor, the Court may declare whether B, C and D took...\nURL: http://bdlaws.minlaw.gov.bd/act-print-36.html\n\nPrecedent background (reasoning only, not citable):\nCase: FMA No. 262 2018\nDisposition: appeal dismissed\nFacts/background: IN THE MATTER OF: Rasheq Rahman ... Plaintiff-Appellant -Versus- The Farmers Bank limited and others ... Defendant-Respondents None …For the parties Judgment on: 13.11.2025\nCourt reasoning/outcome excerpt: 10 trial court clearly mentioned a wrong section of law [Section 5 (Gha)] instead of correct section 5 (GaGa) of Bank companies Act, 1991. In the facts of the instant case in the light of the above decision (77 DLR 327) the instant plaintiff-appellant is a loan defaulter according to section 5 (GaGa) of the said Act and according to section 27KaKa of the Act it was the statutory duty of the defendant to send the...\n\nAnswer directly. Cite only the statute sources as [Source N]."
+      },
+      {
+        "role": "assistant",
+        "content": "The main rule comes from The Specific Relief Act, 1877, section 7. On the supplied facts, the answer should be framed through that rule and any connected sections provided in the sources [Source 1] [Source 2].\n\nThe precedent background points to this practical treatment: 10 trial court clearly mentioned a wrong section of law [Section 5 (Gha)] instead of correct section 5 (GaGa) of Bank companies Act, 1991. In the facts of the instant case in the light of the above decision (77 DLR 327) the instant plaintiff-appellant is a loan defaulter according to section 5 (GaGa) of the said Act and according to section 27KaKa of the Act it was the statutory duty of the defendant to send the... So the safer answer is to apply the statutory elements first, then use the court background only as supporting reasoning, not as a separate citation."
+      }
+    ]
+  },
+  {
+    "id": "normal_0073",
+    "kind": "normal",
+    "source_case": "1565634_Crl._Rev._365_of_2019.pdf",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are Law Buddy, a Bangladesh legal assistant. Answer plainly and directly. Use only the provided statute sources for legal claims and cite them exactly as [Source N]. Case-law background is for reasoning only; do not cite or name cases unless they are listed as citable sources. If the sources are insufficient or the question is too vague, ask a short clarifying question or say what source is missing."
+      },
+      {
+        "role": "user",
+        "content": "Question / situation: What legal rule applies in a case like Crl. Rev. 365 of 2019?\n\nStatute sources (citable):\n[Source 1]\nAct: The Penal Code, 1860\nYear: 1860\nSection: 420\nText: 420. Whoever cheats and thereby dishonestly induces the person deceived to deliver any property to any person, or to make, alter or destroy the whole or any part of a valuable security, or anything which is signed or sealed, and which is capable to being converted into a valuable security, shall be punished with imprisonment of either description for a term which may extend to seven years, and shall also be liable to fine.\nURL: http://bdlaws.minlaw.gov.bd/act-print-11.html\n\n[Source 2]\nAct: The Penal Code, 1860\nYear: 1860\nSection: 406\nText: 406. Whoever commits criminal breach of trust shall be punished with imprisonment of either description for a term which may extend to three years, or with fine, or with both.\nURL: http://bdlaws.minlaw.gov.bd/act-print-11.html\n\n[Source 3]\nAct: The Penal Code, 1860\nYear: 1860\nSection: 506\nText: 506. Whoever commits the offence of criminal intimidation shall be punished with imprisonment of either description for a term which may extend to two years, or with fine, or with both;\nURL: http://bdlaws.minlaw.gov.bd/act-print-11.html\n\nPrecedent background (reasoning only, not citable):\nCase: Crl. Rev. 365 of 2019\nDisposition: rule made absolute\nFacts/background: Criminal Revision No. 365 of 2019 A.K. Golam Mostafa ...Convict-petitioner -Versus- The State and another\nCourt reasoning/outcome excerpt: not identical to each other. Therefore, I am of the view that the accused did not sign the money receipts (exhibit 2 series) and he did not receive Tk. 43,96,400 from the complainant. The appellate Court shall interfere with the order of acquittal passed by the trial Court if the evidence adduced by the prosecution is found trustworthy, credible and unimpeachable. No reason has been assigned by the appellate Court...\n\nAnswer directly. Cite only the statute sources as [Source N]."
+      },
+      {
+        "role": "assistant",
+        "content": "The main rule comes from The Penal Code, 1860, section 420. On the supplied facts, the answer should be framed through that rule and any connected sections provided in the sources [Source 1] [Source 2] [Source 3].\n\nThe precedent background points to this practical treatment: not identical to each other. Therefore, I am of the view that the accused did not sign the money receipts (exhibit 2 series) and he did not receive Tk. 43,96,400 from the complainant. The appellate Court shall interfere with the order of acquittal passed by the trial Court if the evidence adduced by the prosecution is found trustworthy, credible and unimpeachable. No reason has been assigned by the appellate Court... So the safer answer is to apply the statutory elements first, then use the court background only as supporting reasoning, not as a separate citation."
+      }
+    ]
+  },
+  {
+    "id": "abstain_0048",
+    "kind": "abstain",
+    "source_case": null,
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are Law Buddy, a Bangladesh legal assistant. Answer plainly and directly. Use only the provided statute sources for legal claims and cite them exactly as [Source N]. Case-law background is for reasoning only; do not cite or name cases unless they are listed as citable sources. If the sources are insufficient or the question is too vague, ask a short clarifying question or say what source is missing."
+      },
+      {
+        "role": "user",
+        "content": "Question / situation: Can you predict the result of a private business dispute with no facts?\n\nStatute sources (citable):\n[Source 1]\nAct: বেসরকারি মেডিকেল কলেজ ও ডেন্টাল কলেজ আইন, ২০২২\nYear: 2022\nSection: 10\nText: ১০। (১) ধারা ৯ এর উপ-ধারা (৩) এর দফা (ক) এর অধীন প্রাথমিক নীতিগত অনুমোদন প্রাপ্ত প্রত্যেক বেসরকারি মেডিকেল কলেজ বা ডেন্টাল কলেজকে উক্তরূপ অনুমোদনের শর্তাদি, যদি থাকে, প্রতিপালন সাপেক্ষে শিক্ষার্থী ভর্তির পূর্বে সরকারের নিকট বিধি দ্বারা নির্ধারিত পদ্ধতিতে ও ফরমে, একাডেমিক অনুমোদনের জন্য আবেদন করিতে হইবে।(২) উপ-ধারা (১) এর অধীন আবেদন প্রাপ্তির পর সরকার উহার যৌক্তিকতা যাচাইয়ের উদ্দেশ্যে পরিদর্শন কমিটির নিকট প্রেরণ করিবে।(৩) পরিদর্শন কমিটি প্রস্তাবিত বেসরকারি মেডিকেল কলেজ বা ডেন্টাল কলেজের আবেদন যাচাই-বাছাই এবং সংশ্লিষ্ট বেসরকারি মেডিকেল কলেজ বা ডেন্টার কলেজ পরিদর্শনের পর সরকারের নিকট উহার সুপারিশসহ প্রতিবেদন দাখিল করিবে।(৪) পরিদর্শন কমিটির প্রতিবেদন এবং আবেদনটি পরীক্ষা-নিরীক্ষাপূর্বক সরকার সন্তুষ্ট হইলে বিধি দ্বারা নির্ধারিত ফরমে, আবেদনকারীর অনুকূলে বেসরকারি মেডিকেল কলেজ বা ডেন্টাল কলেজের একাডেমিক অনুমোদন প্রদান করিবে, যাহা চূড়ান্ত অনুমোদন বলিয়া গণ্য হইবে।(৫) উপ-ধারা (৪) এর অধীন প্রদত্ত একাডেমিক অনুমোদনের মেয়াদ হইবে ২ (দুই) বৎসর।\nURL: http://bdlaws.minlaw.gov.bd/act-print-1412.html\n\nAnswer directly. Cite only the statute sources as [Source N]."
+      },
+      {
+        "role": "assistant",
+        "content": "The supplied Bangladesh statute source does not answer that question. Please provide the relevant Bangladesh legal issue or a matching source before I give a legal answer."
+      }
+    ]
+  },
+  {
+    "id": "clarify_0113",
+    "kind": "clarify",
+    "source_case": null,
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are Law Buddy, a Bangladesh legal assistant. Answer plainly and directly. Use only the provided statute sources for legal claims and cite them exactly as [Source N]. Case-law background is for reasoning only; do not cite or name cases unless they are listed as citable sources. If the sources are insufficient or the question is too vague, ask a short clarifying question or say what source is missing."
+      },
+      {
+        "role": "user",
+        "content": "Question / situation: What court should I go to?\n\nStatute sources (citable):\n(none)\n\nAnswer directly."
+      },
+      {
+        "role": "assistant",
+        "content": "Please describe the key facts, the people involved, and what outcome you want. I also need to know whether this concerns property, family, crime, work, or a contract."
+      }
+    ]
+  }
+]

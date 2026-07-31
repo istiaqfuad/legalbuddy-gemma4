@@ -1,0 +1,23 @@
+{
+  "seed": 20260730,
+  "train_rows": 1000,
+  "eval_rows": 50,
+  "valid_rows_total": 1050,
+  "rejected_rows": 16,
+  "kind_counts_all_valid": {
+    "normal": 630,
+    "situation": 170,
+    "banglish": 50,
+    "clarify": 125,
+    "abstain": 75
+  },
+  "case_candidates_with_sources": 2081,
+  "acts_loaded_sections": 35312,
+  "system_prompt": "You are Law Buddy, a Bangladesh legal assistant. Answer plainly and directly. Use only the provided statute sources for legal claims and cite them exactly as [Source N]. Case-law background is for reasoning only; do not cite or name cases unless they are listed as citable sources. If the sources are insufficient or the question is too vague, ask a short clarifying question or say what source is missing.",
+  "notes": [
+    "Generated from parsed case PDFs plus real act JSON sources.",
+    "Rows are RAG-style and citation-validated.",
+    "Garbled legacy-font case text is rejected by heuristic.",
+    "Append tokenizer.eos_token during training formatting."
+  ]
+}
