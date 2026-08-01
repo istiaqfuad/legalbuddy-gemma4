@@ -37,7 +37,7 @@ export const PROVIDER_MODELS: Record<Provider, string[]> = {
 
 export const DEFAULT_SETTINGS: ChatSettings = {
   provider: "groq",
-  model: "llama-3.3-70b-versatile",
+  model: "",
   temperature: 0.2,
   maxTokens: null,
   topK: 6,
