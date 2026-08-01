@@ -98,74 +98,7 @@ export function SidebarContent({
           </div>
         </Section>
 
-        {/* Model */}
-        <Section title="Model" tag="dev only" divider>
-          <div className="space-y-2">
-            <Label>Provider</Label>
-            <div role="radiogroup" aria-label="LLM provider" className="flex rounded-lg border border-line p-1">
-              {PROVIDERS.map((p) => (
-                <button
-                  key={p}
-                  role="radio"
-                  aria-checked={settings.provider === p}
-                  onClick={() => pickProvider(p)}
-                  className={cn(
-                    "flex-1 rounded-md px-3 py-1.5 text-sm font-medium capitalize transition-colors",
-                    settings.provider === p
-                      ? "bg-accent text-white"
-                      : "text-muted hover:text-text",
-                  )}
-                >
-                  {p}
-                </button>
-              ))}
-            </div>
-          </div>
 
-          <label className="block space-y-2">
-            <Label>Model</Label>
-            <input
-              list="sidebar-model-options"
-              value={settings.model}
-              onChange={(e) => set({ model: e.target.value })}
-              placeholder="provider default"
-              className="h-10 w-full rounded-lg border border-line bg-bg px-3 text-sm text-text outline-none focus:border-accent/50"
-            />
-            <datalist id="sidebar-model-options">
-              {PROVIDER_MODELS[settings.provider].map((m) => (
-                <option key={m} value={m} />
-              ))}
-            </datalist>
-          </label>
-
-          <div className="space-y-2">
-            <Row label="Temperature" value={settings.temperature.toFixed(1)} />
-            <input
-              type="range"
-              min={0}
-              max={1}
-              step={0.1}
-              value={settings.temperature}
-              onChange={(e) => set({ temperature: Number(e.target.value) })}
-              aria-label="Temperature"
-              className="w-full accent-accent"
-            />
-            <Hint>Lower = focused & consistent. Keep low for legal answers.</Hint>
-          </div>
-
-          <label className="block space-y-2">
-            <Label>Max tokens</Label>
-            <input
-              type="number"
-              min={1}
-              value={settings.maxTokens ?? ""}
-              onChange={(e) => set({ maxTokens: e.target.value ? Number(e.target.value) : null })}
-              placeholder="auto"
-              className="h-10 w-full rounded-lg border border-line bg-bg px-3 text-sm text-text outline-none focus:border-accent/50"
-            />
-            <Hint>Caps answer length. Blank = model default.</Hint>
-          </label>
-        </Section>
       </div>
 
       <div className="border-t border-line px-6 py-4">
