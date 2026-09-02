@@ -148,8 +148,74 @@ def legal_chat_pipeline_stream(
     Yields event dicts: ``{"type": "sources", ...}`` once (known before
     generation), then ``{"type": "delta", "text": ...}`` per token chunk, then
     ``{"type": "done"}``. Uses plain-text generation with inline ``[Source N]``
-    citations (no structured wrapper). Untraced for now to keep the stream simple.
+    citations (no structured wrapper). Wrapped in a LangSmith request trace
+    (retrieval/generation child spans nest inside it automatically).
     """
+    client = get_langsmith_client()
+    if client is None:
+        yield from _legal_chat_stream_events(
+            question,
+            history=history,
+            top_k=top_k,
+            max_tokens=max_tokens,
+            provider=provider,
+            model=model,
+            temperature=temperature,
+            clarify_score_floor=clarify_score_floor,
+            low_confidence_floor=low_confidence_floor,
+        )
+        return
+
+    answer_chunks: list[str] = []
+    source_count = 0
+    with trace(
+        name="legal-chat-stream",
+        run_type="chain",
+        inputs={
+            "question": question,
+            "history_turns": len(history or []),
+            "top_k": top_k,
+            "stream": True,
+        },
+        metadata={"endpoint": "/rag/legal/chat/stream"},
+    ) as request_span:
+        for event in _legal_chat_stream_events(
+            question,
+            history=history,
+            top_k=top_k,
+            max_tokens=max_tokens,
+            provider=provider,
+            model=model,
+            temperature=temperature,
+            clarify_score_floor=clarify_score_floor,
+            low_confidence_floor=low_confidence_floor,
+        ):
+            if event.get("type") == "sources":
+                source_count = len(event.get("sources") or [])
+            elif event.get("type") == "delta":
+                answer_chunks.append(event.get("text") or "")
+            yield event
+        request_span.end(
+            outputs={
+                "answer_preview": "".join(answer_chunks)[:200],
+                "source_count": source_count,
+            }
+        )
+
+
+def _legal_chat_stream_events(
+    question: str,
+    *,
+    history: list[ChatMessage] | None = None,
+    top_k: int | None = None,
+    max_tokens: int | None = None,
+    provider: str | None = None,
+    model: str | None = None,
+    temperature: float | None = None,
+    clarify_score_floor: float | None = None,
+    low_confidence_floor: float | None = None,
+) -> Iterator[dict]:
+    """Untraced event generator behind legal_chat_pipeline_stream."""
     resolved_top_k = top_k or config.RETRIEVAL_TOP_K
     resolved_max_tokens = (
         max_tokens if max_tokens is not None else config.ANSWER_MAX_TOKENS

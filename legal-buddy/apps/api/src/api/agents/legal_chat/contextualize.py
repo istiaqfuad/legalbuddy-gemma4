@@ -7,8 +7,11 @@ from api.agents.legal_chat.prompting import build_condense_messages
 
 def _condense_model(provider: str | None) -> str:
     resolved = (provider or config.DEFAULT_LLM_PROVIDER or "gemini").lower()
-    if resolved == "groq":
-        return config.GROQ_CONDENSE_MODEL
+    if resolved in ("groq", "openai"):
+        # None -> reuse the answer model. Single-model servers (llama.cpp) serve
+        # one alias and reject requests for any other model name, so a distinct
+        # condense model must be an explicit opt-in via GROQ_CONDENSE_MODEL.
+        return config.GROQ_CONDENSE_MODEL or config.GROQ_MODEL
     return config.GEMINI_CONDENSE_MODEL
 
 

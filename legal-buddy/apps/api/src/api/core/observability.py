@@ -28,6 +28,9 @@ def configure_tracing() -> None:
         os.environ["LANGSMITH_ENDPOINT"] = config.LANGSMITH_ENDPOINT
     if config.LANGSMITH_PROJECT:
         os.environ["LANGSMITH_PROJECT"] = config.LANGSMITH_PROJECT
+    # Required only for org-scoped API keys; harmless otherwise.
+    if config.LANGSMITH_WORKSPACE_ID:
+        os.environ["LANGSMITH_WORKSPACE_ID"] = config.LANGSMITH_WORKSPACE_ID
 
 
 # Apply configuration on import, before any tracing runs.

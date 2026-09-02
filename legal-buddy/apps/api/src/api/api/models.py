@@ -17,8 +17,10 @@ class LegalChatRequest(BaseModel):
     max_tokens: int | None = None
     top_k: int | None = None
     # Testing knobs (remove in production). provider/model/temperature let the
-    # frontend switch LLM backend and tune generation per request.
-    provider: Literal["gemini", "groq"] | None = None
+    # frontend switch LLM backend and tune generation per request. "groq" and
+    # "openai" both target the OpenAI-compatible endpoint configured via env
+    # (GROQ_BASE_URL/GROQ_MODEL); None falls back to DEFAULT_LLM_PROVIDER.
+    provider: Literal["gemini", "groq", "openai"] | None = None
     model: str | None = None
     temperature: float | None = None
     # Per-request overrides for the two clarify thresholds (sidebar sliders).

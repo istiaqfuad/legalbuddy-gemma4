@@ -7,19 +7,23 @@ class Config(BaseSettings):
     )
 
     # Chat LLM. provider selects the backend; each has its own default model.
-    DEFAULT_LLM_PROVIDER: str = "gemini"  # "gemini" | "groq"
+    # "groq" (and its alias "openai") is ANY OpenAI-compatible /v1/chat/completions
+    # endpoint — real Groq cloud, llama.cpp, vLLM, LM Studio — switched purely via
+    # the GROQ_* env vars below, no code changes.
+    DEFAULT_LLM_PROVIDER: str = "groq"  # "groq" | "gemini" ("openai" == "groq")
     GEMINI_API_KEY: str | None = None
     CHAT_MODEL: str = "gemini-2.5-flash"
-    # Groq (OpenAI-compatible). Useful for testing without the Gemini free-tier cap.
+    # OpenAI-compatible endpoint (Groq cloud, llama.cpp, vLLM, ...).
     GROQ_API_KEY: str | None = None
     GROQ_BASE_URL: str = "https://api.groq.com/openai/v1"
     GROQ_MODEL: str = "llama-3.3-70b-versatile"
 
-    # Fast/cheap models for the multi-turn query rewrite (history-aware retrieval).
+    # Fast/cheap model for the multi-turn query rewrite (history-aware retrieval).
     # Independent of the answer model above — the rewrite is a tiny, latency-
-    # sensitive call, so it uses the smallest model per provider.
+    # sensitive call. Leave unset to reuse the answer model: REQUIRED for
+    # single-model servers (llama.cpp serves one alias and rejects other names).
     GEMINI_CONDENSE_MODEL: str = "gemini-2.5-flash-lite"
-    GROQ_CONDENSE_MODEL: str = "llama-3.1-8b-instant"
+    GROQ_CONDENSE_MODEL: str | None = None  # None -> GROQ_MODEL
     # Turns of conversation history kept for the rewrite and answer prompt.
     HISTORY_WINDOW_TURNS: int = 6
 
@@ -31,6 +35,8 @@ class Config(BaseSettings):
     LANGSMITH_API_KEY: str | None = None
     LANGSMITH_ENDPOINT: str | None = None
     LANGSMITH_PROJECT: str | None = "legal-buddy"
+    # Required only for org-scoped API keys.
+    LANGSMITH_WORKSPACE_ID: str | None = None
 
     # Qdrant vector store
     QDRANT_VECTORESTORE: str = "http://213.136.80.53:6333"

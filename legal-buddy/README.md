@@ -155,12 +155,22 @@ Notes:
 - `question` is required
 - `top_k` is optional and falls back to `RETRIEVAL_TOP_K`
 - `max_tokens` is optional. If omitted/null and `ANSWER_MAX_TOKENS` is also unset, the model default token limit behavior is used.
-- `provider` (`gemini`|`groq`), `model`, and `temperature` are optional per-request
-  testing knobs; the web UI exposes them (plus `top_k`/`max_tokens`) in a dev settings panel.
+- `provider` (`gemini`|`groq`|`openai`), `model`, and `temperature` are optional
+  per-request testing knobs. `groq` and `openai` both target the
+  OpenAI-compatible endpoint configured by env (`GROQ_BASE_URL`, `GROQ_MODEL`,
+  `GROQ_API_KEY`) — switch between the local llama.cpp Gemma 4 server, Groq
+  cloud, vLLM, or any other `/v1/chat/completions` server purely via
+  `.env`; see `.env.example` Options A/B. The web UI defaults to the server's
+  env-selected provider.
 
 ## Observability
 
-LangSmith instrumentation is integrated in the API for retrieval/generation spans. Set `LANGSMITH_TRACING=true` and `LANGSMITH_API_KEY` to enable ingestion. If tracing is disabled or the key is not configured, the pipeline still runs without tracing.
+LangSmith instrumentation covers both the JSON and the streaming chat paths:
+each request is traced as a chain with nested child spans for the query
+embedding, Qdrant vector search, and answer generation. Set
+`LANGSMITH_TRACING=true` and `LANGSMITH_API_KEY` to enable ingestion (plus
+`LANGSMITH_WORKSPACE_ID` for org-scoped keys). If tracing is disabled or the
+key is not configured, the pipeline still runs without tracing.
 
 ## Data and Ingestion
 
@@ -190,3 +200,4 @@ make run-docker-compose  # sync + docker compose up --build
 - Ingestion: `apps/ingestion/README.md`
 - Chunking & retrieval strategy: `docs/chunking_and_retrieval.md`
 - Eval harness: `eval/README.md`
+- Demo script (video + live presentation): `docs/DEMO_SCRIPT.md`

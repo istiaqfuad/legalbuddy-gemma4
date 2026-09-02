@@ -5,10 +5,10 @@ Backend service for legal RAG chat.
 ## Responsibilities
 
 - Accept legal chat requests
-- Embed question via AWS Bedrock
-- Retrieve relevant sections from Qdrant
+- Embed the question with a local sentence-transformers model (`EMBEDDING_MODEL`, default multilingual-e5-base)
+- Retrieve relevant statute sections from Qdrant (parent-document retrieval)
 - Build grounded prompt with source citations
-- Generate final answer with Gemini
+- Generate the answer with the configured LLM — the local fine-tuned Gemma served by llama.cpp (OpenAI-compatible) in the full stack, or Gemini/Groq for dev
 - Return answer + structured sources
 - Emit LangSmith traces when configured
 

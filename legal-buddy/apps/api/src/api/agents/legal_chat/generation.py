@@ -254,9 +254,15 @@ def _stream_groq(
 def _resolve_provider_model(
     provider: str | None, model: str | None
 ) -> tuple[str, str, str]:
-    """Resolve (provider, answer_model, langsmith_provider) from request knobs."""
-    provider = (provider or config.DEFAULT_LLM_PROVIDER or "gemini").lower()
-    if provider == "groq":
+    """Resolve (provider, answer_model, langsmith_provider) from request knobs.
+
+    "openai" is an alias for the OpenAI-compatible path ("groq") — both go to
+    GROQ_BASE_URL, which may be Groq cloud, llama.cpp, vLLM, or any other
+    /v1/chat/completions server. The active backend is chosen purely by env
+    vars (GROQ_BASE_URL / GROQ_MODEL / GROQ_API_KEY).
+    """
+    provider = (provider or config.DEFAULT_LLM_PROVIDER or "groq").lower()
+    if provider in ("groq", "openai"):
         return "groq", (model or config.GROQ_MODEL), "groq"
     return "gemini", (model or config.CHAT_MODEL), "google_genai"
 
