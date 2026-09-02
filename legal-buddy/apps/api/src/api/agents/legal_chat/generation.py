@@ -1,5 +1,6 @@
 from collections.abc import Iterator
 
+import httpx
 import instructor
 from google import genai
 from google.genai import types
@@ -14,6 +15,26 @@ from api.agents.legal_chat.structured_models import StructuredLegalAnswer
 GROQ_BASE_URL = config.GROQ_BASE_URL
 DEFAULT_TEMPERATURE = 0.2
 DEFAULT_TOP_P = 0.9
+
+
+def _openai_client() -> "OpenAI":
+    """OpenAI-compatible client with a timeout suited to local model servers.
+
+    The SDK default (5s connect) breaks against llama.cpp: it binds its port
+    only after the model finishes loading, and a CPU-only server can take
+    minutes to first token. Retries are kept low — a hung generation should
+    surface, not silently queue behind duplicates.
+    """
+    from openai import OpenAI
+
+    return OpenAI(
+        api_key=config.GROQ_API_KEY,
+        base_url=GROQ_BASE_URL,
+        timeout=httpx.Timeout(
+            config.GROQ_TIMEOUT_SECONDS, connect=30.0
+        ),
+        max_retries=1,
+    )
 
 
 def _extract_gemini_usage(response: types.GenerateContentResponse) -> dict[str, int]:
@@ -164,9 +185,8 @@ def _run_groq(
 ) -> str:
     if not config.GROQ_API_KEY:
         raise ValueError("GROQ_API_KEY is not configured")
-    from openai import OpenAI
 
-    base = OpenAI(api_key=config.GROQ_API_KEY, base_url=GROQ_BASE_URL)
+    base = _openai_client()
     structured_client = instructor.from_openai(base)
     structured_messages = _build_structured_messages(messages)
     max_source_id = len(sources)
@@ -196,9 +216,8 @@ def _run_groq_text(
 ) -> str:
     if not config.GROQ_API_KEY:
         raise ValueError("GROQ_API_KEY is not configured")
-    from openai import OpenAI
 
-    base = OpenAI(api_key=config.GROQ_API_KEY, base_url=GROQ_BASE_URL)
+    base = _openai_client()
     extra: dict = {"max_tokens": max_tokens} if max_tokens is not None else {}
     response = base.chat.completions.create(
         model=model, messages=messages, temperature=temperature, **extra
@@ -228,9 +247,8 @@ def _stream_groq(
 ) -> Iterator[str]:
     if not config.GROQ_API_KEY:
         raise ValueError("GROQ_API_KEY is not configured")
-    from openai import OpenAI
 
-    base = OpenAI(api_key=config.GROQ_API_KEY, base_url=GROQ_BASE_URL)
+    base = _openai_client()
     extra: dict = {"max_tokens": max_tokens} if max_tokens is not None else {}
     stream = base.chat.completions.create(
         model=model,

@@ -49,7 +49,10 @@
   --color-danger: var(--danger);
   --color-ring: var(--ring);
 
-  --font-sans: var(--font-geist-sans);
+  /* Geist for Latin, Noto Sans Bengali for Bengali script (shaping-correct
+     conjuncts/matras), system sans as last resort. */
+  --font-sans: var(--font-geist-sans), var(--font-noto-bengali), ui-sans-serif,
+    system-ui, sans-serif;
 }
 
 * {

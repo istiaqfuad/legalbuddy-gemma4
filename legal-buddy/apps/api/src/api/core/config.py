@@ -17,6 +17,12 @@ class Config(BaseSettings):
     GROQ_API_KEY: str | None = None
     GROQ_BASE_URL: str = "https://api.groq.com/openai/v1"
     GROQ_MODEL: str = "llama-3.3-70b-versatile"
+    # Total request timeout for the OpenAI-compatible client. Generous default:
+    # a CPU-only llama.cpp server can take minutes to first token (prompt
+    # processing), and llama.cpp only starts accepting connections after the
+    # model finishes loading. The OpenAI SDK's own default connect timeout
+    # (5s) is far too tight for that.
+    GROQ_TIMEOUT_SECONDS: float = 300.0
 
     # Fast/cheap model for the multi-turn query rewrite (history-aware retrieval).
     # Independent of the answer model above — the rewrite is a tiny, latency-

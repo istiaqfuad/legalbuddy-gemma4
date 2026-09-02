@@ -186,9 +186,9 @@ The full pipeline was executed end-to-end on `unsloth/gemma-2-27b-it`
 `gemma-4-31B-it` (whitepaper §4.4), executed on a single RTX PRO 6000
 (102 GB) — log: `training/train_gemma4.log`:
 
-- 250 steps / 2 epochs over the 1,000-example set, **42.0 minutes**
-- final train loss **0.6543** (from an initial 7.30), best/final eval loss
-  **0.3863** on the 50-example holdout
+- 250 steps / 2 epochs over the 1,000-example set, **40.4 minutes**
+- final train loss **0.6546** (from an initial 7.30), best/final eval loss
+  **0.3869** on the 50-example holdout
 - eval loss fell monotonically every 25-step checkpoint: 0.759 → 0.527 → 0.464
   → 0.428 → 0.402 → 0.397 → 0.390 → 0.387 → 0.386 — no overfitting within
   the 2-epoch budget
@@ -201,7 +201,7 @@ The full pipeline was executed end-to-end on `unsloth/gemma-2-27b-it`
 | run | duration | final train loss | best eval loss |
 |---|---|---|---|
 | gemma-2-27b-it (dev) | 28.3 min | 1.0312 | 0.5106 |
-| **gemma-4-31B-it (production)** | 42.0 min | **0.6543** | **0.3863** |
+| **gemma-4-31B-it (production)** | 40.4 min | **0.6546** | **0.3869** |
 
 The production model halves holdout loss — the stronger base adapts to the
 citation-grounded style task substantially better.
@@ -244,7 +244,7 @@ text rather than erroring.
 |---|---|---|
 | retrieval | 120-pair gold set, R@k + MRR, 4 variants A/B | R@1 0.258 → 0.567, MRR 0.364 → 0.675 (`eval/REPORT.md`) |
 | SFT data | per-row citation + phrase validation | 1,050 valid / 16 rejected (`style_sft_prod/`) |
-| training | held-out eval loss each 25 steps | eval loss 0.3863 (Gemma 4 production run) |
+| training | held-out eval loss each 25 steps | eval loss 0.3869 (Gemma 4 production run) |
 | generation | structured schema + citation-id validation at serve time | invalid ids dropped, silent fallback to text |
 | behavioral | clarify/abstain share of the SFT mix | 19% of training examples are clarify or abstain turns |
 

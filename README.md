@@ -52,7 +52,7 @@ Both fine-tunes ran end-to-end with identical data and hyperparameters
 | run | duration | final train loss | best eval loss |
 |---|---|---|---|
 | gemma-2-27b-it (development) | 28.3 min | 1.0312 | 0.5106 |
-| **gemma-4-31B-it (production)** | 42.0 min | **0.6543** | **0.3863** |
+| **gemma-4-31B-it (production)** | 40.4 min | **0.6546** | **0.3869** |
 
 Logs are committed: [training/train_gemma4.log](training/train_gemma4.log),
 [training/train_prod.log](training/train_prod.log). The Gemma 4 merged

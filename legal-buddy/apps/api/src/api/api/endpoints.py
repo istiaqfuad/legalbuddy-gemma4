@@ -28,6 +28,14 @@ def _client_error(exc: Exception) -> tuple[int, str]:
     low = str(exc).lower()
     if any(
         k in low
+        for k in ("timed out", "timeout", "apitimeouterror", "read timeout")
+    ):
+        return 504, (
+            "The model server did not respond in time. If it was still "
+            "loading, wait a minute and try again."
+        )
+    if any(
+        k in low
         for k in ("resource_exhausted", "429", "quota", "rate limit", "rate-limit")
     ):
         return 429, (

@@ -37,7 +37,7 @@ comparable:
 | run | duration | final train loss | best eval loss |
 |---|---|---|---|
 | gemma-2-27b-it (dev) | 28.3 min | 1.0312 | 0.5106 |
-| **gemma-4-31B-it (production)** | 42.0 min | **0.6543** | **0.3863** |
+| **gemma-4-31B-it (production)** | 40.4 min | **0.6546** | **0.3869** |
 
 The Gemma 4 run halves eval loss on the same 50-example holdout (0.511 →
 0.386) — the stronger base model adapts to the citation-grounded style task
@@ -72,4 +72,5 @@ Outputs:
 2. Serve: copy `lawbuddy-q4.gguf` to `legal-buddy/models/` and
    `docker compose -f docker-compose.full.yml up -d --build`.
 3. Update the training table above and `TECHNICAL_DOCUMENTATION.md` with the
-   real loss numbers. *(Done — 2026-09-02 run: train 0.6543 / eval 0.3863.)*
+   real loss numbers. *(Done — 2026-09-02 runs: 27B train 1.0312 / eval 0.5106;
+   Gemma 4 train 0.6546 / eval 0.3869.)*
