@@ -39,29 +39,15 @@ def _embed(question: str, traced: bool) -> list[float]:
     return embed_text_query_with_trace(question, max_input_chars=2048, traced=traced)
 
 
-def _search(collection: str, vector: list[float], candidate_limit: int, traced: bool):
-    """Run one Qdrant query against `collection`; optionally trace it."""
-    if not traced:
-        return _qdrant_client.query_points(
-            collection_name=collection,
-            query=vector,
-            limit=candidate_limit,
-            with_payload=True,
-        ).points
-    with trace(
-        name="vector-search",
-        run_type="retriever",
-        inputs={"collection": collection, "candidate_limit": candidate_limit},
-        metadata={"provider": "qdrant"},
-    ) as search_span:
-        hits = _qdrant_client.query_points(
-            collection_name=collection,
-            query=vector,
-            limit=candidate_limit,
-            with_payload=True,
-        ).points
-        search_span.end(outputs={"hit_count": len(hits)})
-        return hits
+def _search(collection: str, vector: list[float], candidate_limit: int):
+    """Run one Qdrant query against `collection` (no tracing here — the span
+    lives in retrieve_sources so it can cover the parent-document collapse too)."""
+    return _qdrant_client.query_points(
+        collection_name=collection,
+        query=vector,
+        limit=candidate_limit,
+        with_payload=True,
+    ).points
 
 
 def _hits_to_sources(hits, top_k: int) -> list[SourceItem]:
@@ -102,20 +88,66 @@ def _hits_to_sources(hits, top_k: int) -> list[SourceItem]:
     return sources
 
 
+def _sources_to_documents(sources: list[SourceItem]) -> list[dict]:
+    """Final sources in LangSmith's retriever-document format, so the dashboard
+    renders the actual retrieved sections (page_content + metadata) instead of
+    a bare hit count."""
+    return [
+        {
+            "id": f"{s.act_title} §{s.section_index}",
+            "score": round(s.score, 4),
+            "page_content": s.excerpt[:1000],
+            "metadata": {
+                "act_title": s.act_title,
+                "act_year": s.act_year,
+                "section_index": s.section_index,
+                "source_url": s.source_url,
+            },
+        }
+        for s in sources
+    ]
+
+
 def retrieve_sources(
     question: str, top_k: int, *, vector: list[float] | None = None
 ) -> list[SourceItem]:
     """Retrieve statute sections from the acts collection."""
     candidate_limit = max(top_k * CANDIDATE_MULTIPLIER, MIN_CANDIDATES)
-    traced = get_langsmith_client() is not None
     if vector is None:
-        vector = _embed(question, traced)
-    hits = _search(config.QDRANT_COLLECTION, vector, candidate_limit, traced)
-    sources = [
-        s
-        for s in _hits_to_sources(hits, top_k)
-        if s.score >= config.STATUTE_SCORE_FLOOR
-    ]
+        vector = _embed(question, traced=get_langsmith_client() is not None)
+
+    if get_langsmith_client() is None:
+        hits = _search(config.QDRANT_COLLECTION, vector, candidate_limit)
+        sources = [
+            s
+            for s in _hits_to_sources(hits, top_k)
+            if s.score >= config.STATUTE_SCORE_FLOOR
+        ]
+    else:
+        with trace(
+            name="vector-search",
+            run_type="retriever",
+            inputs={
+                "query": question,
+                "collection": config.QDRANT_COLLECTION,
+                "candidate_limit": candidate_limit,
+                "top_k": top_k,
+            },
+            metadata={"provider": "qdrant", "vector_size": len(vector)},
+        ) as search_span:
+            hits = _search(config.QDRANT_COLLECTION, vector, candidate_limit)
+            sources = [
+                s
+                for s in _hits_to_sources(hits, top_k)
+                if s.score >= config.STATUTE_SCORE_FLOOR
+            ]
+            search_span.end(
+                outputs={
+                    "documents": _sources_to_documents(sources),
+                    "candidate_hit_count": len(hits),
+                }
+            )
+
     for new_id, source in enumerate(sources, start=1):
         source.citation_id = new_id
     return sources

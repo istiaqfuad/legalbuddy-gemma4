@@ -34,6 +34,29 @@ def _is_low_confidence(statutes: list, floor: float) -> bool:
     return not statutes or statutes[0].score < floor
 
 
+def _sources_for_trace(statutes: list) -> list[dict]:
+    """Compact source summary for trace outputs — act, section, score."""
+    return [
+        {
+            "act": s.act_title,
+            "section": s.section_index,
+            "score": round(s.score, 4),
+        }
+        for s in statutes
+    ]
+
+
+def _request_inputs(
+    question: str, search_query: str, history: list[ChatMessage], top_k: int
+) -> dict:
+    return {
+        "question": question,
+        "standalone_query": search_query,
+        "history_turns": len(history),
+        "top_k": top_k,
+    }
+
+
 def legal_chat_pipeline(
     question: str,
     *,
@@ -66,9 +89,11 @@ def legal_chat_pipeline(
     # History-aware retrieval: rewrite a follow-up into a standalone search query
     # (no-op on the first turn). The answer prompt still gets the original question
     # plus the conversation so the reply reads naturally.
-    search_query = condense_question(question, history, provider=provider)
-
     client = get_langsmith_client()
+    search_query = condense_question(
+        question, history, provider=provider, traced=client is not None
+    )
+
     if client is None:
         statutes = retrieve_sources(search_query, top_k=resolved_top_k)
         if _is_no_match(statutes, clarify_floor):
@@ -93,20 +118,17 @@ def legal_chat_pipeline(
     with trace(
         name="legal-chat-request",
         run_type="chain",
-        inputs={
-            "question": question,
-            "standalone_query": search_query,
-            "history_turns": len(history),
-            "top_k": resolved_top_k,
-            "max_tokens": resolved_max_tokens,
-        },
+        inputs=_request_inputs(question, search_query, history, resolved_top_k)
+        | {"max_tokens": resolved_max_tokens},
         metadata={"endpoint": "/rag/legal/chat"},
     ) as request_span:
         statutes = retrieve_sources(search_query, top_k=resolved_top_k)
         if _is_no_match(statutes, clarify_floor):
             clarify = run_llm_text(build_clarify_prompt(question, history), **llm_kwargs)
             response = LegalChatResponse(answer=clarify, sources=[])
-            request_span.end(outputs=response.model_dump())
+            request_span.end(
+                outputs=response.model_dump() | {"path": "clarify"}
+            )
             return response
 
         messages = build_grounded_prompt(
@@ -124,8 +146,9 @@ def legal_chat_pipeline(
         response = LegalChatResponse(answer=answer, sources=statutes)
         request_span.end(
             outputs={
-                "answer_preview": answer[:200],
-                "source_count": len(statutes),
+                "answer": answer,
+                "sources": _sources_for_trace(statutes),
+                "path": "grounded",
             }
         )
         return response
@@ -163,17 +186,21 @@ def legal_chat_pipeline_stream(
             temperature=temperature,
             clarify_score_floor=clarify_score_floor,
             low_confidence_floor=low_confidence_floor,
+            traced=False,
         )
         return
 
     answer_chunks: list[str] = []
-    source_count = 0
+    sources_summary: list[dict] = []
     with trace(
         name="legal-chat-stream",
         run_type="chain",
         inputs={
             "question": question,
-            "history_turns": len(history or []),
+            "history": [
+                {"role": m.role, "content": m.content}
+                for m in _trim_history(history)
+            ],
             "top_k": top_k,
             "stream": True,
         },
@@ -189,16 +216,24 @@ def legal_chat_pipeline_stream(
             temperature=temperature,
             clarify_score_floor=clarify_score_floor,
             low_confidence_floor=low_confidence_floor,
+            traced=True,
         ):
             if event.get("type") == "sources":
-                source_count = len(event.get("sources") or [])
+                sources_summary = [
+                    {
+                        "act": s.get("act_title"),
+                        "section": s.get("section_index"),
+                        "score": round(s.get("score", 0.0), 4),
+                    }
+                    for s in event.get("sources") or []
+                ]
             elif event.get("type") == "delta":
                 answer_chunks.append(event.get("text") or "")
             yield event
         request_span.end(
             outputs={
-                "answer_preview": "".join(answer_chunks)[:200],
-                "source_count": source_count,
+                "answer": "".join(answer_chunks),
+                "sources": sources_summary,
             }
         )
 
@@ -214,8 +249,15 @@ def _legal_chat_stream_events(
     temperature: float | None = None,
     clarify_score_floor: float | None = None,
     low_confidence_floor: float | None = None,
+    traced: bool = False,
 ) -> Iterator[dict]:
-    """Untraced event generator behind legal_chat_pipeline_stream."""
+    """Event generator behind legal_chat_pipeline_stream.
+
+    When ``traced`` is set, the query rewrite and the streaming generation each
+    get their own LangSmith span (the embedding and vector-search spans are
+    created inside their own modules), so the full question→answer path is
+    visible in one trace tree.
+    """
     resolved_top_k = top_k or config.RETRIEVAL_TOP_K
     resolved_max_tokens = (
         max_tokens if max_tokens is not None else config.ANSWER_MAX_TOKENS
@@ -232,21 +274,25 @@ def _legal_chat_stream_events(
     )
     history = _trim_history(history)
 
-    search_query = condense_question(question, history, provider=provider)
+    search_query = condense_question(
+        question, history, provider=provider, traced=traced
+    )
     statutes = retrieve_sources(search_query, top_k=resolved_top_k)
 
     yield {"type": "sources", "sources": [s.model_dump() for s in statutes]}
 
     if _is_no_match(statutes, clarify_floor):
         # Nothing to ground an answer in — stream a clarifying question instead.
-        for chunk in run_llm_stream(
+        yield from _stream_traced(
             build_clarify_prompt(question, history),
             provider=provider,
             model=model,
             temperature=temperature,
             max_tokens=resolved_max_tokens,
-        ):
-            yield {"type": "delta", "text": chunk}
+            traced=traced,
+            span_name="clarify-generation",
+            span_metadata={"path": "clarify"},
+        )
         yield {"type": "done"}
         return
 
@@ -256,12 +302,62 @@ def _legal_chat_stream_events(
         history,
         low_confidence=_is_low_confidence(statutes, low_conf_floor),
     )
-    for chunk in run_llm_stream(
+    yield from _stream_traced(
         messages,
         provider=provider,
         model=model,
         temperature=temperature,
         max_tokens=resolved_max_tokens,
-    ):
-        yield {"type": "delta", "text": chunk}
+        traced=traced,
+        span_name="answer-generation",
+        span_metadata={
+            "path": "grounded",
+            "source_count": len(statutes),
+            "low_confidence": _is_low_confidence(statutes, low_conf_floor),
+        },
+    )
     yield {"type": "done"}
+
+
+def _stream_traced(
+    messages: list[dict],
+    *,
+    provider: str | None,
+    model: str | None,
+    temperature: float | None,
+    max_tokens: int | None,
+    traced: bool,
+    span_name: str,
+    span_metadata: dict,
+) -> Iterator[dict]:
+    """Stream generation, optionally under an LLM span that captures the full
+    prompt and the assembled answer (chunk-by-chunk deltas stay visible via the
+    request span)."""
+    if not traced:
+        for chunk in run_llm_stream(
+            messages,
+            provider=provider,
+            model=model,
+            temperature=temperature,
+            max_tokens=max_tokens,
+        ):
+            yield {"type": "delta", "text": chunk}
+        return
+
+    chunks: list[str] = []
+    with trace(
+        name=span_name,
+        run_type="llm",
+        inputs={"messages": messages},
+        metadata=span_metadata,
+    ) as gen_span:
+        for chunk in run_llm_stream(
+            messages,
+            provider=provider,
+            model=model,
+            temperature=temperature,
+            max_tokens=max_tokens,
+        ):
+            chunks.append(chunk)
+            yield {"type": "delta", "text": chunk}
+        gen_span.end(outputs={"output": "".join(chunks)})

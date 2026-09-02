@@ -33,9 +33,13 @@ class Config(BaseSettings):
     # Turns of conversation history kept for the rewrite and answer prompt.
     HISTORY_WINDOW_TURNS: int = 6
 
-    # HuggingFace embedding model (run locally via sentence-transformers)
+    # HuggingFace embedding model (run locally via sentence-transformers).
+    # EMBEDDING_DEVICE: "cpu" (default) or "cuda" — the e5-base encoder is a
+    # 278M-parameter transformer, so a CPU-only container can take seconds per
+    # query while a GPU does it in ~10ms.
     HF_TOKEN: str | None = None
     EMBEDDING_MODEL: str
+    EMBEDDING_DEVICE: str = "cpu"
 
     LANGSMITH_TRACING: bool = True
     LANGSMITH_API_KEY: str | None = None

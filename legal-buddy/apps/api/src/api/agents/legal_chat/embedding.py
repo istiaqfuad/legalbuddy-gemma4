@@ -6,7 +6,9 @@ from shared.embedding import embed_query, is_e5, load_embedding_model
 
 def get_embedding_model():
     """The query-side embedding model — same loader the ingestion side uses."""
-    return load_embedding_model(config.EMBEDDING_MODEL, config.HF_TOKEN)
+    return load_embedding_model(
+        config.EMBEDDING_MODEL, config.HF_TOKEN, device=config.EMBEDDING_DEVICE
+    )
 
 
 def embed_text_query(text: str, *, max_input_chars: int = 2048) -> list[float]:
@@ -28,12 +30,14 @@ def embed_text_query_with_trace(
         name="embed-query",
         run_type="embedding",
         inputs={
-            "input_chars": len(query_text),
+            # The query text itself, so the trace shows what was embedded.
+            "query": query_text,
             "max_input_chars": max_input_chars,
         },
         metadata={
             "provider": "sentence-transformers",
             "ls_model_name": config.EMBEDDING_MODEL,
+            "device": config.EMBEDDING_DEVICE,
         },
     ) as embedding_span:
         vector = embed_text_query(text, max_input_chars=max_input_chars)

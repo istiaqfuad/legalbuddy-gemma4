@@ -1,3 +1,5 @@
+from langsmith import trace
+
 from api.api.models import ChatMessage
 from api.core.config import config
 
@@ -20,6 +22,7 @@ def condense_question(
     history: list[ChatMessage],
     *,
     provider: str | None = None,
+    traced: bool = False,
 ) -> str:
     """Rewrite a follow-up into a standalone retrieval query (history-aware).
 
@@ -33,15 +36,35 @@ def condense_question(
         return question
 
     messages = build_condense_messages(question, history)
-    try:
-        rewritten = run_llm_text(
+
+    def _run() -> str:
+        return run_llm_text(
             messages,
             provider=provider,
             model=_condense_model(provider),
             temperature=0.0,
         )
-    except Exception:
-        return question
+
+    if not traced:
+        try:
+            rewritten = _run()
+        except Exception:
+            return question
+    else:
+        try:
+            with trace(
+                name="condense-question",
+                run_type="chain",
+                inputs={
+                    "follow_up": question,
+                    "history_turns": len(history),
+                },
+                metadata={"purpose": "history-aware retrieval rewrite"},
+            ) as span:
+                rewritten = _run()
+                span.end(outputs={"standalone_query": (rewritten or "").strip()})
+        except Exception:
+            return question
 
     rewritten = (rewritten or "").strip().strip('"').strip()
     return rewritten or question
