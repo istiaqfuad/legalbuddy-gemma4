@@ -1,281 +1,142 @@
-# LegalBuddy — Technical Documentation
+# LegalBuddy Technical Documentation
 
-**Blockchain Olympiad Bangladesh 2026 (BCOLBD), AI Category — Final Round**
-Team LegalBuddy (ID 6a739711a3937) · Istiaqur Rahman Fuad, University of Rajshahi
+Blockchain Olympiad Bangladesh 2026 (BCOLBD), AI Category, Final Round
+Team LegalBuddy (ID 6a739711a3937) — Istiaqur Rahman Fuad, University of Rajshahi
 
-This document describes the developed system end-to-end: architecture,
-algorithms, data preprocessing, model training, validation methods, and
-deployment. Every number cited here is reproducible from artifacts in this
-repository (training logs, eval reports, dataset manifests).
-
----
+This document describes the built system: how the data is prepared, how retrieval works, how the model was fine-tuned and validated, and how everything is deployed. Each section points to the code and artifacts in this repository that back it. The white paper covers motivation and business context; this document covers the implementation.
 
 ## 1. System Overview
 
-LegalBuddy is a citation-grounded legal AI assistant for Bangladesh law. A user
-asks a question in English, Bengali, or Banglish (code-mixed) and receives a
-plain-language answer in which every legal claim cites a specific act and
-section (`[Source N]`) that can be expanded in the UI to show the original
-statute text.
+LegalBuddy is a retrieval-augmented generation (RAG) system for Bangladesh statutory law. A user asks a question in English, Bengali, or Banglish. The system finds the relevant statute sections in a vector index, hands them to a fine-tuned Gemma 4 model with the question, and streams back an answer in which legal claims carry inline citations. Clicking a citation opens the full text of the cited section, with a link to the source page on bdlaws.minlaw.gov.bd.
 
-The core design principle: **the model never answers law from memory.** The
-only path to a legal answer runs through retrieval-augmented generation (RAG)
-against an indexed statutory corpus, with the fine-tuned model responsible for
-style — explaining, citing, asking clarifying questions, and declining when
-the retrieved context is insufficient.
+The design principle behind the whole pipeline is that the model is never asked to answer a legal question from memory. It only ever explains text that was retrieved for that specific question, and the fine-tune exists to enforce that behavior rather than to teach law.
 
-### Components
+There are four services, all defined in legal-buddy/docker-compose.full.yml:
 
-| component | tech | location |
-|---|---|---|
-| Web chat UI | Next.js 15 (App Router), SSE streaming | `legal-buddy/apps/web` |
-| RAG API | FastAPI + instructor (structured output) | `legal-buddy/apps/api` |
-| Vector store | Qdrant | `legal-buddy/docker-compose.full.yml` |
-| Embeddings | `intfloat/multilingual-e5-base` (local, CPU) | `legal-buddy/apps/shared` |
-| LLM | Fine-tuned Gemma (LoRA → merged → 4-bit GGUF) served by llama.cpp (OpenAI-compatible API) | `training/`, `infra/azure/` |
-| Ingestion | act JSON corpus + case-law PDFs → Qdrant | `legal-buddy/apps/ingestion` |
+The web frontend (legal-buddy/apps/web), a Next.js application that renders the chat interface and proxies requests to the API.
 
-### Request flow
+The API (legal-buddy/apps/api), a FastAPI service that owns the RAG pipeline.
 
-```
-user question (en / bn / banglish)
-  │
-  ├─ follow-up? → condense_question(): rewrite into standalone query
-  │              (small model, history-aware)            contextualize.py
-  │
-  ├─ embed query ("query:" prefix, e5)
-  │              → Qdrant top max(5·k, 20) chunks        retrieval.py
-  │
-  ├─ parent-document collapse → k unique full sections
-  │
-  ├─ two-tier confidence gate (0.79 hard / 0.83 soft)    pipeline.py
-  │      below hard floor → deterministic clarify, no LLM call
-  │      below soft floor → answer WITH low-confidence hint
-  │
-  ├─ grounded prompt: [Source 1..k] full section texts   prompting.py
-  │
-  ├─ fine-tuned Gemma → StructuredLegalAnswer            generation.py
-  │      {answer, citations, limitations} via instructor
-  │      citation ids validated ∈ 1..k, fallback to plain text
-  │
-  └─ SSE stream: sources → deltas → done                 endpoints.py
-```
+Qdrant, the vector store holding the indexed statute sections.
 
-The streaming path (used by the UI) emits an initial `sources` event before
-generation starts, so source cards render while the answer streams. The
-non-streaming path enforces the structured schema and appends a validated
-`[Source N]` citation list when the model did not cite inline.
+The LLM server, llama.cpp serving the fine-tuned model as a 4-bit GGUF behind an OpenAI-compatible API.
 
-## 2. Data Preprocessing
+A shared package (legal-buddy/apps/shared) contains the embedding, chunking, and Qdrant logic once, so the ingestion side and the query side cannot drift apart. An ingestion package (legal-buddy/apps/ingestion) builds the index from the corpus.
 
-### 2.1 Statutory corpus
+## 2. Request Flow
 
-- ~1,000 Bangladesh acts from the Ministry of Law portal
-  (bdlaws.minlaw.gov.bd), parsed to JSON; **35,312 sections loaded** in the
-  production build (dataset manifest).
-- Each section → record with `act_title`, `act_year`, `section_index`,
-  `source_url`, `section_full`.
-- **Chunking** (`apps/shared/src/shared/chunking.py`): token-aware splitting
-  sized to the embedding model's *actual* `max_seq_length` (no silent
-  truncation), 24-token overlap (~20% of a 128-token window), with a
-  contextual header (`Act | Title | Section (part k/n)`) prepended to every
-  part so fragments retain statutory context. Footnote markers are stripped;
-  omitted/repealed sections are skipped by regex.
-- Payload keeps both the chunk and `section_full` + `section_uid` so retrieval
-  can return whole sections (below).
+This section follows one question through the system. The code lives in legal-buddy/apps/api/src/api/agents/legal_chat/.
 
-### 2.2 Case-law corpus
+When the question arrives with conversation history (the frontend sends the last six turns), a query rewrite step first condenses it into a standalone search query. A follow-up like "শাস্তি কত বছর?" has no subject on its own, so the rewrite resolves references against the history before retrieval. On the first turn this is skipped. If the rewrite call fails for any reason, the original question is used; retrieval is never blocked by the rewrite.
 
-- 2,081 High Court / Appellate Division judgment PDFs parsed
-  (`apps/ingestion/cases_*.py`: hybrid direct-text + OCR extraction, structured
-  metadata — court, judges, parties, dates, disposition).
-- Case law is **reasoning-only background**: it informed the SFT dataset
-  construction (§4.1) but is not surfaced as a citable source, reducing the
-  risk of misattributed legal claims. Garbled legacy-font extractions are
-  rejected by heuristic.
+The query is embedded with Multilingual-E5-Base running locally through sentence-transformers, using the "query:" prefix the model expects. Qdrant returns up to max(5k, 20) candidate chunks, where k is the number of sources requested.
 
-## 3. Retrieval
+The candidates are collapsed to unique statute sections. Each indexed chunk carries the section's identity (a section ID, the act title and year, the section number, the source URL) and the section's full text. The collapse step keeps the top k distinct sections and returns their full text rather than the chunks. This matters because a raw chunk can be a fragment without its section heading, and a model given fragments tends to misread scope.
 
-### 3.1 Embedding model selection (measured, not assumed)
+A two-tier confidence gate runs on the retrieval scores before any LLM call. If the best score is below 0.79, the query is treated as off-topic and the system answers with a clarifying question without calling the model at all. Between 0.79 and 0.83, the question proceeds to the model but the prompt includes a note that the retrieved material may not fit, and the model is expected to ask a follow-up rather than push an answer. The thresholds came from measurement, not intuition: off-topic questions score around 0.78 to 0.84 on this embedding model, and answerable situational questions land in the same range, so a single cutoff cannot separate them and the borderline judgment is better left to the model with a hint.
 
-The retrieval eval harness (`legal-buddy/eval/`, gold set of 120
-question→section pairs, mostly Bengali, over a 201-act / 5,357-section
-deterministic sample) compared chunking strategies and embedding models.
-Full report: `legal-buddy/eval/REPORT.md`.
+The prompt lists the retrieved sections as [Source 1] through [Source k], each with its act, section number, and full text, followed by the question and the recent conversation. Two prompts exist: one for answering and one for the clarify path.
 
-| variant | R@1 | R@3 | R@5 | R@10 | MRR |
-|---|---|---|---|---|---|
-| baseline (1200-char chunks, triBne-e5-small) | 0.258 | 0.400 | 0.508 | 0.575 | 0.364 |
-| improved chunking (#1–#4) | 0.308 | 0.458 | 0.500 | 0.608 | 0.408 |
-| **improved + multilingual-e5-base @512** | **0.567** | **0.733** | **0.825** | **0.883** | **0.675** |
+## 3. Answer Generation
 
-Two firm findings drove the production configuration:
+The generation code is in generation.py. The API talks to the LLM through an OpenAI-compatible client, which is the same code path whether the endpoint is the local llama.cpp server, Groq's cloud API, or vLLM. The active endpoint is chosen by environment variables only (GROQ_BASE_URL, GROQ_MODEL, GROQ_API_KEY), so switching backends requires no code change and no rebuild.
 
-1. The original embedding model truncated at 128 tokens — baseline's
-   1200-character chunks lost ~60% of their text at embed time.
-2. The model swap dwarfs every chunking change (+31 points on every metric vs
-   +5 for chunking). Production therefore uses
-   `intfloat/multilingual-e5-base` (768-dim, genuinely trained at 512 tokens,
-   strong Bengali↔English alignment) with the improved chunking.
+On the non-streaming path, the request is wrapped with the instructor library, which asks the model for a structured answer: an answer field in Markdown, a citations list, and an optional limitations field. The citation numbers are validated against the number of sources actually provided; numbers outside that range are dropped. If the model already cited inline, the citation list is not appended again. If the structured request fails for any reason, the call falls back to a plain completion rather than returning an error to the user.
 
-### 3.2 Parent-document retrieval
+The streaming path, which the UI uses, requests a plain completion and streams it token by token. The response is sent to the browser as server-sent events: one "sources" event with the retrieved sections before generation starts, then "delta" events with text chunks, then a final "done" event. Source cards render while the answer is still generating.
 
-Retrieval fetches `max(5·k, 20)` candidate chunks, collapses them to unique
-sections by `section_uid`, and returns the **full section text** — the model
-never sees headless fragments, and duplicate parts of one section cannot crowd
-out other relevant acts (`retrieval.py`).
+The OpenAI-compatible client uses a 300-second total timeout with a 30-second connect timeout (configurable via GROQ_TIMEOUT_SECONDS). The defaults matter in practice: llama.cpp does not accept connections until the model has finished loading, and a CPU-only server can take minutes to produce its first token, which is well outside the OpenAI SDK's 5-second default connect timeout. Request timeouts surface to the user as a 504 with a plain explanation, rate limits as a 429, and configuration problems as a 503, with the underlying exception details kept in the server log.
 
-### 3.3 Two-tier confidence gating
+## 4. Data Preprocessing
 
-Measured e5 cosine scores are a *weak* separator — off-topic "what time is it"
-scores 0.836 while an answerable "my neighbor keeps threatening me" tops out
-at 0.818 (with the correct §503 as its top hit). No single cutoff cleanly
-splits answerable from off-topic, so:
+The corpus has two parts.
 
-- **Hard floor 0.79** — only genuine garbage ("best pizza recipe", 0.781)
-  routes to a deterministic clarify without an LLM call.
-- **Soft floor 0.83** — borderline turns still go to the model, *with* their
-  sources plus a low-confidence hint; the fine-tuned model decides whether to
-  answer or ask a follow-up. Borderline judgment is the model's, not a brittle
-  threshold.
+Statutes. Roughly 1,000 acts from the Ministry of Law portal, parsed to JSON, yielding 35,312 loaded sections. Each section becomes a record with act title, year, section number, source URL, and full text. Chunking is token-aware: sections are split to fit the embedding model's real 512-token window, with a 24-token overlap, and each part gets a contextual header (act, title, section, part number) so a fragment still knows what it belongs to. Footnote markers are stripped, and omitted or repealed sections are dropped by pattern. The chunker reads the model's actual max_seq_length at runtime instead of trusting configuration, which is how we found the original embedding model was silently truncating input at 128 tokens.
 
-## 4. Model Training
+Case law. More than 2,000 High Court and Appellate Division judgment PDFs, extracted with a hybrid of direct text extraction for clean English pages and OCR for scanned or Bengali content, then parsed into structured metadata (court, judges, parties, dates, disposition). Case text with garbled legacy-font extraction is rejected by a heuristic. Case law is background: it informed the fine-tuning dataset and the system prompt's framing, but judgments are not indexed as citable sources, because a misattributed case citation is worse than none.
 
-### 4.1 SFT dataset (`training/style_sft_prod/`)
+The ingestion entry point is legal-buddy/apps/ingestion (uv run ingest), which recreates the Qdrant collection with the configured embedding model and upserts all non-repealed sections. Ingestion and query sides share the same embedding and chunking code from apps/shared.
 
-1,000 training + 50 eval examples built by
-`legal-buddy/training/build_style_sft.py` from the parsed case PDFs and real
-act JSON sources. Each example is a full RAG interaction: system prompt,
-retrieved statute context, user turn, target assistant turn.
+## 5. Retrieval Evaluation
 
-| interaction type | share | n |
-|---|---|---|
-| direct statutory Q&A, citation-grounded | 60% | 630 |
-| situational (user describes own problem) | 16% | 170 |
-| Banglish code-mixed queries | 5% | 50 |
-| clarification turns (model asks for details) | 12% | 125 |
-| abstention (out of scope) | 7% | 75 |
+We built a gold set of 120 question-to-section pairs over a deterministic sample of 201 acts (5,357 sections), with questions mostly in Bengali. The gold key is the section, not the chunk, so one set scores every chunking variant. The harness (legal-buddy/eval) ingests candidate configurations into throwaway collections and reports Recall@1/3/5/10 and MRR at section level, with parent-document collapse applied.
 
-**Automated validation** (16 rows rejected and logged in `rejected.jsonl`):
-every citation in a target response must reference a source actually provided
-in that example's prompt; banned phrases ("As an AI language model…") must be
-absent; garbled legacy-font case text is dropped heuristically. Per-row
-outcomes are in `validation.csv`; seed and counts in `manifest.json`.
+Four configurations were measured:
 
-### 4.2 Fine-tuning configuration
+Baseline: the original 1200-character chunks and a small fine-tuned embedding model, scoring Recall@1 of 0.258 and MRR of 0.364.
 
-16-bit LoRA (r=16, α=32, dropout 0.05) on all linear projections
-(q/k/v/o/gate/up/down), 2 epochs, effective batch 8 (1 × 8 accumulation),
-lr 2e-4 cosine, warmup 5%, bf16, gradient checkpointing, adamw_8bit,
-max sequence 4096. The fine-tune teaches response style only — the law itself
-always comes from retrieval at inference time.
+Improved chunking alone: Recall@1 of 0.308, MRR of 0.408.
 
-### 4.3 Completed run (gemma-2-27b-it development run)
+The small model forced to a 512-token window: worse across the board, because the checkpoint was trained at 128 tokens and its higher positions are untrained.
 
-The full pipeline was executed end-to-end on `unsloth/gemma-2-27b-it`
-(`training/train_prod.py`, log: `training/train_prod.log`):
+Improved chunking with Multilingual-E5-Base: Recall@1 of 0.567, Recall@10 of 0.883, MRR of 0.675.
 
-- 250 steps / 2 epochs over the 1,000-example set, 28.3 minutes on a 96 GB GPU
-- final train loss **1.0312**, best/final eval loss **0.5106** (50-example holdout)
-- adapter merged and quantized to the 4-bit GGUF currently served by the demo
-  stack; re-quantizing from the Gemma 4 merged checkpoint (§4.4) replaces it
+The model swap contributed about 31 points on every metric; the chunking work contributed about 5. Production uses the combination that measured best. The full report with per-metric numbers and reproduction commands is legal-buddy/eval/REPORT.md.
 
-### 4.4 Production run (Gemma 4 31B)
+## 6. Fine-Tuning
 
-`training/train_gemma4.py` ran the *identical* dataset and hyperparameters on
-`gemma-4-31B-it` (whitepaper §4.4), executed on a single RTX PRO 6000
-(102 GB) — log: `training/train_gemma4.log`:
+The dataset (training/style_sft_prod) contains 1,000 training and 50 evaluation examples, generated from the parsed case PDFs and real act sources. Each example is a complete RAG interaction: the system prompt, retrieved statute context, a user turn, and a target assistant turn. The mix is 60% direct statutory Q&A with citations, 16% situational questions, 5% Banglish, 12% clarification turns where the correct behavior is to ask for a detail that would change the answer, and 7% abstention cases where the correct behavior is to decline.
 
-- 250 steps / 2 epochs over the 1,000-example set, **40.4 minutes**
-- final train loss **0.6546** (from an initial 7.30), best/final eval loss
-  **0.3869** on the 50-example holdout
-- eval loss fell monotonically every 25-step checkpoint: 0.759 → 0.527 → 0.464
-  → 0.428 → 0.402 → 0.397 → 0.390 → 0.387 → 0.386 — no overfitting within
-  the 2-epoch budget
-- outputs: LoRA adapter (`lawbuddy-gemma4-31b-16bit-final/`) and merged 16-bit
-  checkpoint (59 GB, `lawbuddy-gemma4-31b-merged/`), the direct input to the
-  GGUF → Q4_K_M serving pipeline (`infra/azure/`)
+Every example passed automated validation before entering the set: each citation in the target response must reference a source present in that example's prompt, and phrases like "As an AI language model" must not appear. Sixteen rows failed and were logged in rejected.jsonl. The manifest, per-row metadata, and validation outcomes are all in the repository.
 
-**Comparison with the 27B development run** (same data, same hyperparameters):
+Training was 16-bit LoRA (rank 16, alpha 32, dropout 0.05) over all linear projections, 2 epochs, effective batch size 8, learning rate 2e-4 with cosine decay, bf16, gradient checkpointing. The script is training/train_gemma4.py. The fine-tune teaches style only; the statute text comes from retrieval at inference time.
 
-| run | duration | final train loss | best eval loss |
-|---|---|---|---|
-| gemma-2-27b-it (dev) | 28.3 min | 1.0312 | 0.5106 |
-| **gemma-4-31B-it (production)** | 40.4 min | **0.6546** | **0.3869** |
+The full pipeline was run twice with identical data and hyperparameters, differing only in the base model:
 
-The production model halves holdout loss — the stronger base adapts to the
-citation-grounded style task substantially better.
+The development run on gemma-2-27b-it: 28.3 minutes, final training loss 1.0312, evaluation loss 0.5106 (training/train_prod.log).
 
-## 5. Serving & Deployment
+The production run on gemma-4-31B-it: 40.4 minutes, final training loss 0.6546, evaluation loss 0.3869 (training/train_gemma4.log). Evaluation loss fell at every 25-step checkpoint, from 0.759 to 0.387, with no sign of overfitting within the two-epoch budget.
 
-### Quantization tiers (whitepaper §4.4)
+Both runs finished on a single RTX PRO 6000 (96 GB). Since the runs are directly comparable, the lower loss on the same holdout set is attributable to the base model. The production run saves both the LoRA adapter and a merged 16-bit checkpoint; the merged checkpoint is the input to the serving pipeline.
 
-| tier | memory | use |
-|---|---|---|
-| BF16 merged | ~62 GB | institutional, multi-GPU |
-| Q8_0 | ~32 GB | single high-end GPU |
-| **Q4_K_M (production demo)** | ~18 GB | consumer GPU / high-RAM CPU |
+## 7. Serving and Deployment
 
-The merged checkpoint is converted with llama.cpp's `convert_hf_to_gguf.py`
-(F16) then quantized to Q4_K_M (`infra/azure/vm_quantize*.sh`,
-`finish_fast.sh`). llama.cpp serves it behind an OpenAI-compatible
-`/v1/chat/completions` endpoint with `--alias lawbuddy-gemma4`.
+The merged checkpoint is converted to GGUF with llama.cpp's conversion tooling and quantized to Q4_K_M (infra/azure holds the conversion scripts), producing an approximately 18 GB file. Q8_0 (~32 GB) and full BF16 (~62 GB) tiers are available for better hardware. llama.cpp serves the GGUF behind an OpenAI-compatible chat completions endpoint.
 
-### One-command full stack
+The full stack starts with one command (docker compose -f docker-compose.full.yml up -d --build), after placing the GGUF in legal-buddy/models and copying .env.example to .env. The compose file wires startup order through health checks: the API reports healthy only after the embedding model has loaded and the statute collection has been verified in Qdrant, and the web container waits on the API. A misconfigured vector store fails the container at startup instead of surfacing as a 500 on the first question.
 
-`legal-buddy/docker-compose.full.yml` — web (Next.js :3000) → api
-(FastAPI :8000) → qdrant (:6333) + llm (llama.cpp :8080). Health-check
-dependencies: the API reports healthy only once the embedding model is warm
-*and* the Qdrant collection is verified (`retrieval.py::verify_qdrant`), so
-the stack never accepts traffic half-booted. Full instructions:
-`legal-buddy/docs/docker-deployment.md`.
+The .env file documents the two backend configurations: the local llama.cpp server for the competition demo, and Groq's cloud API for quick testing without a GPU. Both use the same client code. The default provider, model names, timeouts, and the optional rewrite model are all environment variables.
 
-### Structured output
+## 8. Frontend
 
-The API wraps the OpenAI-compatible endpoint with `instructor`
-(`generation.py`), enforcing `StructuredLegalAnswer {answer, citations,
-limitations}`. Citation ids are validated against the actual source count
-before rendering; on any structured-output failure the call degrades to plain
-text rather than erroring.
+The chat interface (legal-buddy/apps/web) is a Next.js application. Answers render as Markdown. Inline [Source N] citations become small clickable marks; hovering one highlights the matching source card and clicking pins it and scrolls it into view. The source panel, collapsed by default, lists each cited section with its score and the external link to the official portal.
 
-## 6. Validation Summary
+The frontend keeps conversation memory client-side and sends the last six turns with each request, which is what powers the follow-up rewrite on the backend. Error states are handled: backend errors arrive as events on the stream and render as inline notices, and a disclaimer sits under the composer at all times. Example prompts on the empty state include English, Bengali, and Banglish questions. The font stack includes Noto Sans Bengali so conjuncts and vowel signs render correctly regardless of the client's system fonts.
 
-| layer | method | result |
-|---|---|---|
-| retrieval | 120-pair gold set, R@k + MRR, 4 variants A/B | R@1 0.258 → 0.567, MRR 0.364 → 0.675 (`eval/REPORT.md`) |
-| SFT data | per-row citation + phrase validation | 1,050 valid / 16 rejected (`style_sft_prod/`) |
-| training | held-out eval loss each 25 steps | eval loss 0.3869 (Gemma 4 production run) |
-| generation | structured schema + citation-id validation at serve time | invalid ids dropped, silent fallback to text |
-| behavioral | clarify/abstain share of the SFT mix | 19% of training examples are clarify or abstain turns |
+## 9. Observability
 
-## 7. Reproducibility
+The API emits LangSmith traces when configured (LANGSMITH_TRACING, LANGSMITH_API_KEY). Both the JSON and streaming paths produce one trace per request, with nested spans for the query embedding, the Qdrant search, and answer generation, plus a span for the follow-up rewrite. Tracing is optional: with no key configured the pipeline runs identically without it.
+
+## 10. Validation Summary
+
+Retrieval was measured against the 120-pair gold set (Section 5). Training was measured with a held-out evaluation loss at every checkpoint (Section 6). The dataset itself was validated row by row at build time. At serving time, citation numbers are validated against the provided sources on every non-streaming request, and the two-tier gate bounds what the model is asked to do. What is not yet measured systematically is end-to-end answer quality on a labeled set of full conversations; the SFT evaluation set covers style, and the citation validation covers grounding, but a human-labeled answer-quality set is future work.
+
+## 11. Limitations
+
+The confidence floors are calibrated to the e5 score distribution and are a pragmatic fix, not a principled one; a cross-encoder reranker would separate answerable from off-topic queries more cleanly.
+
+The corpus is current only as of the last ingestion. Amendments passed after ingestion are invisible until the pipeline runs again, and the UI says so.
+
+The 4-bit tier trades reasoning quality for hardware accessibility, which matters for nuanced legal interpretation even if it is acceptable for grounded Q&A.
+
+The system provides legal information, not legal advice. The system prompt, the training data, and the UI disclaimer all enforce that line, and it is a line the system should not cross.
+
+## 12. Reproduction
 
 ```bash
-# 1. Ingest the corpus into Qdrant (acts JSON in legal-buddy/data/acts/)
+# Build the index (acts JSON under legal-buddy/data/acts/)
 cd legal-buddy && uv sync --all-packages && uv run ingest
 
-# 2. Train (>=96GB GPU)
+# Fine-tune (needs one >=96 GB GPU)
 cd ../training && python train_gemma4.py
 
-# 3. Quantize the merged checkpoint (llama.cpp toolchain)
-../infra/azure/finish_fast.sh          # → lawbuddy-q4.gguf
+# Quantize the merged checkpoint
+../infra/azure/finish_fast.sh   # produces lawbuddy-q4.gguf
 
-# 4. Serve the whole stack
+# Serve the stack
 cp lawbuddy-q4.gguf legal-buddy/models/
-cd legal-buddy && cp .env.example .env && docker compose -f docker-compose.full.yml up -d --build
-
-# 5. Retrieval eval harness (optional, throwaway collections)
-cd legal-buddy && PYTHONPATH=eval uv run python eval/run_eval.py --collection ... --tag ...
+cd legal-buddy && cp .env.example .env
+docker compose -f docker-compose.full.yml up -d --build
 ```
 
-## 8. Known Limitations
-
-- Retrieval confidence floors are calibrated for the e5 cosine distribution;
-  a cross-encoder reranker is the identified robust long-term fix
-  (`config.py` documents the calibration).
-- Corpus coverage ends at ingestion time — recent amendments are blind spots
-  until re-ingested; the UI disclaimer states this.
-- The 4-bit tier trades some reasoning quality for the ability to run on
-  consumer hardware (whitepaper §3.1 quantization trade-off).
-- Legal information, not legal advice: the system prompt, SFT data, and UI
-  all enforce the information side of that line.
+The retrieval harness can be re-run with the commands in legal-buddy/eval/REPORT.md, against throwaway collections so production is never touched.
