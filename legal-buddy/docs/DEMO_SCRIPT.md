@@ -4,6 +4,9 @@ For the ≤10-minute demo video and the live presentation (guideline: video 30
 pts, live presentation 30 pts). Timings target the video; the live talk
 compresses segments 3–5 and leaves room for Q&A.
 
+**Live deployment:** <https://lb.irflab.tech> — use this for the video unless
+you specifically want to show the local one-command stack.
+
 **Before recording, verify the stack:** `docker compose -f
 docker-compose.full.yml ps` — all four services healthy. Have
 <http://localhost:8000/docs> open in a second tab (architecture segment) and
@@ -102,7 +105,7 @@ Screen: `training/train_prod.log` tail + `style_sft_prod/manifest.json`.
   (4-bit model runs on an 18 GB GPU or high-RAM CPU).
 - Everything is open and self-hostable: one `docker compose up` brings the
   whole stack.
-- **Close with the one-liner again.**
+- **Close with the one-liner again** and the live URL: lb.irflab.tech.
 
 ---
 
