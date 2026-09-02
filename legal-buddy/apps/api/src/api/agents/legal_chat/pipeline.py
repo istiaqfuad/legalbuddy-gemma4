@@ -86,15 +86,13 @@ def legal_chat_pipeline(
     history = _trim_history(history)
     llm_kwargs = {"provider": provider, "model": model, "temperature": temperature}
 
-    # History-aware retrieval: rewrite a follow-up into a standalone search query
-    # (no-op on the first turn). The answer prompt still gets the original question
-    # plus the conversation so the reply reads naturally.
     client = get_langsmith_client()
-    search_query = condense_question(
-        question, history, provider=provider, traced=client is not None
-    )
 
     if client is None:
+        # History-aware retrieval: rewrite a follow-up into a standalone search
+        # query (no-op on the first turn). The answer prompt still gets the
+        # original question plus the conversation so the reply reads naturally.
+        search_query = condense_question(question, history, provider=provider)
         statutes = retrieve_sources(search_query, top_k=resolved_top_k)
         if _is_no_match(statutes, clarify_floor):
             # Nothing to ground an answer in — ask for specifics, don't dead-end.
@@ -118,10 +116,19 @@ def legal_chat_pipeline(
     with trace(
         name="legal-chat-request",
         run_type="chain",
-        inputs=_request_inputs(question, search_query, history, resolved_top_k)
+        inputs=_request_inputs(question, "", history, resolved_top_k)
         | {"max_tokens": resolved_max_tokens},
         metadata={"endpoint": "/rag/legal/chat"},
     ) as request_span:
+        # The rewrite runs INSIDE the request span so its trace nests here
+        # (a span opened before the request span would become a second,
+        # standalone root trace in the LangSmith dashboard).
+        search_query = condense_question(
+            question, history, provider=provider, traced=True
+        )
+        request_span.inputs = _request_inputs(
+            question, search_query, history, resolved_top_k
+        ) | {"max_tokens": resolved_max_tokens}
         statutes = retrieve_sources(search_query, top_k=resolved_top_k)
         if _is_no_match(statutes, clarify_floor):
             clarify = run_llm_text(build_clarify_prompt(question, history), **llm_kwargs)
@@ -171,8 +178,14 @@ def legal_chat_pipeline_stream(
     Yields event dicts: ``{"type": "sources", ...}`` once (known before
     generation), then ``{"type": "delta", "text": ...}`` per token chunk, then
     ``{"type": "done"}``. Uses plain-text generation with inline ``[Source N]``
-    citations (no structured wrapper). Wrapped in a LangSmith request trace
-    (retrieval/generation child spans nest inside it automatically).
+    citations (no structured wrapper).
+
+    When tracing is on, the whole pipeline runs in a dedicated worker thread
+    and events are handed to this generator through a queue. Reason: LangSmith
+    nests spans via contextvars, but Starlette iterates a sync streaming
+    generator across threadpool hops — spans opened in different resumptions
+    detach into separate root traces. One worker thread = one stable context =
+    exactly one trace per request.
     """
     client = get_langsmith_client()
     if client is None:
@@ -190,52 +203,77 @@ def legal_chat_pipeline_stream(
         )
         return
 
-    answer_chunks: list[str] = []
-    sources_summary: list[dict] = []
-    with trace(
-        name="legal-chat-stream",
-        run_type="chain",
-        inputs={
-            "question": question,
-            "history": [
-                {"role": m.role, "content": m.content}
-                for m in _trim_history(history)
-            ],
-            "top_k": top_k,
-            "stream": True,
-        },
-        metadata={"endpoint": "/rag/legal/chat/stream"},
-    ) as request_span:
-        for event in _legal_chat_stream_events(
-            question,
-            history=history,
-            top_k=top_k,
-            max_tokens=max_tokens,
-            provider=provider,
-            model=model,
-            temperature=temperature,
-            clarify_score_floor=clarify_score_floor,
-            low_confidence_floor=low_confidence_floor,
-            traced=True,
-        ):
-            if event.get("type") == "sources":
-                sources_summary = [
-                    {
-                        "act": s.get("act_title"),
-                        "section": s.get("section_index"),
-                        "score": round(s.get("score", 0.0), 4),
+    import queue
+    import threading
+
+    event_q: queue.Queue = queue.Queue()
+    _DONE = object()
+    worker_error: list[BaseException] = []
+
+    def _worker() -> None:
+        answer_chunks: list[str] = []
+        sources_summary: list[dict] = []
+        try:
+            with trace(
+                name="legal-chat-stream",
+                run_type="chain",
+                inputs={
+                    "question": question,
+                    "history": [
+                        {"role": m.role, "content": m.content}
+                        for m in _trim_history(history)
+                    ],
+                    "top_k": top_k,
+                    "stream": True,
+                },
+                metadata={"endpoint": "/rag/legal/chat/stream"},
+            ) as request_span:
+                for event in _legal_chat_stream_events(
+                    question,
+                    history=history,
+                    top_k=top_k,
+                    max_tokens=max_tokens,
+                    provider=provider,
+                    model=model,
+                    temperature=temperature,
+                    clarify_score_floor=clarify_score_floor,
+                    low_confidence_floor=low_confidence_floor,
+                    traced=True,
+                ):
+                    if event.get("type") == "sources":
+                        sources_summary = [
+                            {
+                                "act": s.get("act_title"),
+                                "section": s.get("section_index"),
+                                "score": round(s.get("score", 0.0), 4),
+                            }
+                            for s in event.get("sources") or []
+                        ]
+                    elif event.get("type") == "delta":
+                        answer_chunks.append(event.get("text") or "")
+                    event_q.put(event)
+                request_span.end(
+                    outputs={
+                        "answer": "".join(answer_chunks),
+                        "sources": sources_summary,
                     }
-                    for s in event.get("sources") or []
-                ]
-            elif event.get("type") == "delta":
-                answer_chunks.append(event.get("text") or "")
-            yield event
-        request_span.end(
-            outputs={
-                "answer": "".join(answer_chunks),
-                "sources": sources_summary,
-            }
-        )
+                )
+        except BaseException as exc:  # surfaced to the consumer below
+            worker_error.append(exc)
+        finally:
+            event_q.put(_DONE)
+
+    threading.Thread(
+        target=_worker, name="langsmith-traced-stream", daemon=True
+    ).start()
+
+    while True:
+        event = event_q.get()
+        if event is _DONE:
+            break
+        yield event
+    if worker_error:
+        raise worker_error[0]
 
 
 def _legal_chat_stream_events(
