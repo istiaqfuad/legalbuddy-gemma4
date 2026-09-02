@@ -35,4 +35,6 @@ skills-lock.json
 # graphify generated knowledge graph
 graphify-out/
 
+# Submission materials (whitepaper PDFs/docx, guidelines) — submitted separately
 submission_materials/
+docs/submission_materials/
