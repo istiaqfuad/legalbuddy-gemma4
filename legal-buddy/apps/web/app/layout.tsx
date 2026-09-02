@@ -9,7 +9,7 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "Law Buddy — legal answers, cited",
+  title: "LegalBuddy — legal answers, cited",
   description:
     "Ask questions about Bangladesh statutory law and get answers grounded in the acts, cited to the section.",
 };

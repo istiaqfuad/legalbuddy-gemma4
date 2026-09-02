@@ -7,7 +7,7 @@ export function Logo({ className }: { className?: string }) {
       viewBox="0 0 32 32"
       className={className}
       role="img"
-      aria-label="Law Buddy"
+      aria-label="LegalBuddy"
       xmlns="http://www.w3.org/2000/svg"
     >
       <defs>

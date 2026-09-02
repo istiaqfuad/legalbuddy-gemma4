@@ -15,7 +15,10 @@ export interface ChatResponse {
 }
 
 // --- Testing knobs (dev-only; remove with the UI controls before production) ---
-export type Provider = "gemini" | "groq";
+// "" = use the server's DEFAULT_LLM_PROVIDER (env-driven), so switching the
+// backend (llama.cpp / Groq cloud / any OpenAI-compatible endpoint) needs no
+// frontend change — only API env vars.
+export type Provider = "" | "gemini" | "groq";
 
 export interface ChatSettings {
   provider: Provider;
@@ -30,13 +33,8 @@ export interface ChatSettings {
   lowConfidenceFloor: number;
 }
 
-export const PROVIDER_MODELS: Record<Provider, string[]> = {
-  gemini: ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.0-flash"],
-  groq: ["llama-3.3-70b-versatile", "llama-3.1-8b-instant", "openai/gpt-oss-120b"],
-};
-
 export const DEFAULT_SETTINGS: ChatSettings = {
-  provider: "groq",
+  provider: "",
   model: "",
   temperature: 0.2,
   maxTokens: null,

@@ -22,7 +22,9 @@ export async function POST(request: Request) {
   const topK = num(body.top_k);
   // Testing knobs forwarded as-is to the API (remove with the UI controls in prod).
   const provider =
-    body.provider === "gemini" || body.provider === "groq" ? body.provider : undefined;
+    body.provider === "gemini" || body.provider === "groq" || body.provider === "openai"
+      ? body.provider
+      : undefined;
   const model =
     typeof body.model === "string" && body.model.trim() ? body.model.trim() : undefined;
   const temperature = num(body.temperature);

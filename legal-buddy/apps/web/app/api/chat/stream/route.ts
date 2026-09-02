@@ -41,7 +41,9 @@ export async function POST(request: Request) {
     typeof v === "number" && Number.isFinite(v) ? v : undefined;
   const history = parseHistory(body.history);
   const provider =
-    body.provider === "gemini" || body.provider === "groq" ? body.provider : undefined;
+    body.provider === "gemini" || body.provider === "groq" || body.provider === "openai"
+      ? body.provider
+      : undefined;
   const model =
     typeof body.model === "string" && body.model.trim() ? body.model.trim() : undefined;
 

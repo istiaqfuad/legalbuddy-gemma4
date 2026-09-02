@@ -18,8 +18,9 @@ import { cn } from "@/lib/utils";
 
 const EXAMPLES = [
   "What is the punishment for theft under the Penal Code?",
+  "আমার প্রতিবেশী আমাকে হুমকি দিচ্ছে। আইনে এর বিধান কী?",
+  "amar barite dhuke churi korar chesta korlo, ki korte pari?",
   "How is culpable homicide defined?",
-  "What are the grounds for a writ petition?",
 ];
 
 export function ChatApp() {
@@ -105,7 +106,7 @@ export function ChatApp() {
             question,
             history,
             top_k: settings.topK,
-            provider: settings.provider,
+            provider: settings.provider || undefined, // "" -> server env default
             model: settings.model || undefined,
             temperature: settings.temperature,
             max_tokens: settings.maxTokens ?? undefined,
@@ -171,7 +172,7 @@ export function ChatApp() {
           <div className="flex items-center gap-2.5">
             <Logo className="h-7 w-7" />
             <div className="flex items-baseline gap-2">
-              <span className="text-[15px] font-semibold tracking-tight text-text">Law Buddy</span>
+              <span className="text-[15px] font-semibold tracking-tight text-text">LegalBuddy</span>
               <span className="hidden text-[13px] text-muted sm:inline">
                 Bangladesh statutes &amp; acts
               </span>

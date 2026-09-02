@@ -1,15 +1,9 @@
 "use client";
 
 import { Trash2 } from "lucide-react";
-import {
-  type ChatSettings,
-  type Provider,
-  PROVIDER_MODELS,
-} from "@/lib/types";
+import { type ChatSettings } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-
-const PROVIDERS: Provider[] = ["gemini", "groq"];
 
 export function SidebarContent({
   settings,
@@ -23,8 +17,6 @@ export function SidebarContent({
   canClear: boolean;
 }) {
   const set = (patch: Partial<ChatSettings>) => onChange({ ...settings, ...patch });
-  const pickProvider = (provider: Provider) =>
-    set({ provider, model: PROVIDER_MODELS[provider][0] });
 
   return (
     <div className="flex h-full flex-col bg-surface">
