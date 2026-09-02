@@ -1,43 +1,59 @@
 #!/usr/bin/env python3
+"""Production fine-tuning: Gemma-4-31B-it 16-bit LoRA on the 1000-example SFT dataset.
+
+Mirrors train_prod.py (the completed gemma-2-27b run) so the two are directly
+comparable: same dataset, same LoRA config, same SFT hyperparameters. Only the
+base model differs. After training it saves the LoRA adapter AND a merged 16-bit
+checkpoint (lawbuddy-gemma4-31b-merged/) ready for the GGUF conversion + Q4_K_M
+quantization pipeline in infra/azure/finish_fast.sh.
+
+Run on a >=96GB VRAM GPU (Molab RTX PRO 6000 worked for the 27B run at 16-bit).
+"""
 import gc, json, os, sys, time
-import torch
-from datasets import Dataset
-from trl import SFTTrainer, SFTConfig
-from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
-from peft import LoraConfig, get_peft_model
+
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 print("=" * 60)
 print("PRODUCTION TRAINING — Gemma-4-31B 16-bit LoRA")
 print("=" * 60)
 t0 = time.time()
 
-model_name = "google/gemma-4-31B-it"
-max_seq_length = 4096
-dtype = torch.bfloat16
+import torch
+import unsloth
+from unsloth import FastLanguageModel
 
-print(f"\n[1/5] Loading model {model_name}...")
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-model = AutoModelForCausalLM.from_pretrained(
-    model_name,
-    torch_dtype=dtype,
-    device_map="auto",
+MODEL_NAME = os.environ.get("BASE_MODEL", "unsloth/gemma-4-31B-it")
+max_seq_length = 4096
+dtype = torch.bfloat16 if unsloth.is_bfloat16_supported() else torch.float16
+
+print(f"\n[1/5] Loading model {MODEL_NAME} (dtype={dtype}, seq_len={max_seq_length})...")
+model, tokenizer = FastLanguageModel.from_pretrained(
+    model_name=MODEL_NAME,
+    max_seq_length=max_seq_length,
+    dtype=dtype,
+    load_in_4bit=False,
 )
 print(f"  Model loaded in {time.time()-t0:.0f}s")
 
+# ── 2. Apply LoRA ──
 print("\n[2/5] Applying LoRA adapters...")
-lora_config = LoraConfig(
+model = FastLanguageModel.get_peft_model(
+    model,
     r=16,
     lora_alpha=32,
     lora_dropout=0.05,
-    target_modules=["q_proj.linear", "k_proj.linear", "v_proj.linear", "o_proj.linear", "gate_proj.linear", "up_proj.linear", "down_proj.linear"],
+    target_modules=["q_proj", "k_proj", "v_proj", "o_proj",
+                     "gate_proj", "up_proj", "down_proj"],
     bias="none",
-    task_type="CAUSAL_LM",
+    use_gradient_checkpointing="unsloth",
+    random_state=42,
 )
-model = get_peft_model(model, lora_config)
 model.print_trainable_parameters()
-model.gradient_checkpointing_enable()
 
+# ── 3. Load dataset ──
 print("\n[3/5] Loading production dataset...")
+from datasets import Dataset
+
 def load_jsonl(path):
     examples = []
     with open(path) as f:
@@ -46,7 +62,8 @@ def load_jsonl(path):
                 examples.append(json.loads(line))
     return examples
 
-def convert_messages(messages):
+def convert_messages_for_gemma(messages):
+    """Gemma has no separate system role — fold system into the first user turn."""
     converted = []
     system_text = ""
     for msg in messages:
@@ -68,19 +85,31 @@ def convert_messages(messages):
 train_raw = load_jsonl("style_sft_prod/train.jsonl")
 eval_raw  = load_jsonl("style_sft_prod/eval.jsonl")
 
-for ex in train_raw: ex["messages"] = convert_messages(ex["messages"])
-for ex in eval_raw: ex["messages"] = convert_messages(ex["messages"])
+for ex in train_raw:
+    ex["messages"] = convert_messages_for_gemma(ex["messages"])
+for ex in eval_raw:
+    ex["messages"] = convert_messages_for_gemma(ex["messages"])
 
+# Format with chat template + EOS
 def format_example(example):
-    text = tokenizer.apply_chat_template(example["messages"], tokenize=False, add_generation_prompt=False)
-    if not text.endswith(tokenizer.eos_token): text += tokenizer.eos_token
+    text = tokenizer.apply_chat_template(
+        example["messages"], tokenize=False, add_generation_prompt=False
+    )
+    if not text.endswith(tokenizer.eos_token):
+        text += tokenizer.eos_token
     return {"text": text}
 
 train_dataset = Dataset.from_list(train_raw).map(format_example)
 eval_dataset  = Dataset.from_list(eval_raw).map(format_example)
 
+print(f"  Train: {len(train_dataset)}  Eval: {len(eval_dataset)}")
+print(f"  Sample text length: {len(train_dataset[0]['text'])} chars")
+
+# ── 4. Train ──
 print("\n[4/5] Starting training...")
-OUTPUT_DIR = "lawbuddy-prod-31b-16bit"
+from trl import SFTTrainer, SFTConfig
+
+OUTPUT_DIR = "lawbuddy-gemma4-31b-16bit"
 
 training_args = SFTConfig(
     output_dir=OUTPUT_DIR,
@@ -104,8 +133,9 @@ training_args = SFTConfig(
     max_grad_norm=0.3,
     optim="adamw_8bit",
     report_to="none",
-    max_length=max_seq_length,
+    max_seq_length=max_seq_length,
     dataset_text_field="text",
+    seed=42,
 )
 
 trainer = SFTTrainer(
@@ -116,12 +146,43 @@ trainer = SFTTrainer(
     processing_class=tokenizer,
 )
 
-train_result = trainer.train()
+print(f"  Effective batch size: {1 * 8} = 8")
+print(f"  Epochs: 2")
 
-print("\n[5/5] Saving and merging best model...")
-FINAL_DIR = "lawbuddy-gemma4-31b-merged"
-model = trainer.model.merge_and_unload()
-model.save_pretrained(FINAL_DIR)
+train_result = trainer.train()
+print(f"\n  Training complete!")
+print(f"  Final train loss: {train_result.training_loss:.4f}")
+
+# ── 5. Save adapter + merged 16-bit checkpoint ──
+print("\n[5/5] Saving best model...")
+FINAL_DIR = "lawbuddy-gemma4-31b-16bit-final"
+trainer.model.save_pretrained(FINAL_DIR)
 tokenizer.save_pretrained(FINAL_DIR)
 
-print("\nDone! Merged model saved to", FINAL_DIR)
+# Merged checkpoint — this is what finish_fast.sh converts to GGUF:
+#   convert_hf_to_gguf.py lawbuddy-gemma4-31b-merged --outtype f16
+#   llama-quantize ... Q4_K_M
+MERGED_DIR = "lawbuddy-gemma4-31b-merged"
+model.save_pretrained_merged(MERGED_DIR, tokenizer, save_method="merged_16bit")
+
+log_history = trainer.state.log_history
+with open("train_gemma4.log.json", "w") as f:
+    json.dump(log_history, f, indent=2)
+
+eval_losses = [e["eval_loss"] for e in log_history if "eval_loss" in e]
+print(f"\n{'=' * 60}")
+print(f"TRAINING COMPLETE")
+print(f"{'=' * 60}")
+print(f"  Duration: {(time.time()-t0)/60:.1f} minutes")
+print(f"  Final train loss: {train_result.training_loss:.4f}")
+if eval_losses:
+    print(f"  Best eval loss: {min(eval_losses):.4f}")
+    print(f"  Final eval loss: {eval_losses[-1]:.4f}")
+print(f"  Adapter saved to: {FINAL_DIR}/")
+print(f"  Merged model saved to: {MERGED_DIR}/")
+print(f"  Log saved to: train_gemma4.log.json")
+
+del model, trainer
+gc.collect()
+torch.cuda.empty_cache()
+print("\nDone. GPU memory freed.")
