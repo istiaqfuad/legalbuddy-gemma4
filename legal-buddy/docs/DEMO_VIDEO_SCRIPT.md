@@ -207,15 +207,26 @@ streaming.
 The deployed site uses a cloud endpoint; the fine-tuned model currently has
 no permanent host. Options, ranked:
 
-**Option A — one free Molab session (recommended).** Start a GPU session on
-Molab (the same free platform the training ran on). The merged checkpoint is
-safe on Google Drive. On the session: download it, build llama.cpp, convert
-and quantize to Q4_K_M (~18 GB), run `llama-server`, and point a local copy
-of the app at it — the `.env` diff shown in Segment 4. Record the segment,
-then let the session expire. Cost: zero. Bonus: the Q4 GGUF becomes a
-permanent artifact on Drive, ready for any future real deployment. Roughly
-two hours of session time; the conversion is scriptable and I can run the
-whole thing when you open the session.
+**Done — the model is quantized, archived, and served.** The Q4_K_M GGUF
+(`lawbuddy-q4.gguf`, 18.7 GB) is on Google Drive under `LegalBuddy/`, and a
+live OpenAI-compatible endpoint was verified end-to-end:
+
+```
+GROQ_BASE_URL = <served-model-base-url>/v1
+GROQ_MODEL    = lawbuddy-gemma4
+GROQ_API_KEY  = any non-empty value
+```
+
+The served URL is session-scoped (a Molab GPU session behind a Cloudflare
+tunnel) — regenerate it when you record: on a Molab GPU session, run the
+llama.cpp server on the GGUF with `--alias lawbuddy-gemma4`, expose it with
+`cloudflared tunnel --url http://127.0.0.1:8100`, and point the app at the
+resulting `trycloudflare.com` URL. Measured speed on the RTX PRO 6000:
+~47 tokens/second generation, ~64 tokens/second prompt evaluation.
+
+For the recording: show the `.env` diff (the only change), start the app,
+and run the same theft question — the Segment 4 narration applies as
+written.
 
 **Option B — one rented GPU hour (~$1).** Any RTX 3090/4090-class rental
 (RunPod, Vast) fits the 18 GB Q4 model. Download the GGUF produced in
