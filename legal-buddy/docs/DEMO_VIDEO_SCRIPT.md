@@ -14,6 +14,12 @@ described are what the site actually does, not expectations.
 - Record the system audio-free; narration is added after, or read live if you
   prefer one take
 - Close the settings drawer; keep the window at a fixed size for all segments
+- Pre-typing tip: keep all five queries in a scratch file and paste — never
+  retype on camera
+
+For the live presentation (not the video), use
+[`PRESENTATION_SCRIPT.md`](PRESENTATION_SCRIPT.md) — same material, arranged
+for speaking with Q&A prep.
 
 ---
 
@@ -231,3 +237,15 @@ answer, but honest and complete — and Segment 4's narration still works with
 **Do not** claim the live site is running the fine-tuned model if it isn't —
 juries ask exactly this question, and the env-switch demo (Option A/B/C) is a
 stronger answer than a claim.
+
+---
+
+## Demo query cheat-sheet
+
+| # | query | demonstrates |
+|---|---|---|
+| 1 | What is the punishment for theft under the Penal Code? | grounding + expandable citation cards |
+| 2 | আমার প্রতিবেশী আমাকে হুমকি দিচ্ছে। আইনে এর বিধান কী? | Bengali → English corpus cross-lingual retrieval |
+| 3 | amar barite dhuke churi korar chesta korlo, ki korte pari? | Banglish situational + clarification behavior |
+| 4 | What is the best pizza recipe? | hard confidence floor — no hallucinated legal answer |
+| 5 | শাস্তি কত বছর? (as a follow-up in the Query 1 conversation) | conversation memory / query rewriting |
